@@ -18,5 +18,5 @@ python manage.py migrate
 python manage.py createsuperuser (for Django admin interface access. Pass will not display as a security measure, enter as normal)
 python manage.py runserver (for Django development server)
 
-To access the Django admin interface, go to http://127.0.0.1:8000/admin/ after user creation
+To access the Django admin interface, go to http://127.0.0.1:8000/admin/ after user creation, and log in using the super user acc you just made
 ```
