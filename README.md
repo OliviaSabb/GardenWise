@@ -15,7 +15,7 @@ source venv/bin/activate (Linux/MacOS)
 .\venv\Scripts\activate (Windows)
 pip install -r requirements.txt (dependencies)
 python manage.py migrate
-python manage.py createsuperuser (for Django admin interface access. Pass won't display as a security measure, type as normal)
+python manage.py createsuperuser (for Django admin interface access. Pass will not display as a security measure, type as normal)
 python manage.py runserver (for Django development server)
 
 To access the Django admin interface, go to http://127.0.0.1:8000/admin/ after user creation
