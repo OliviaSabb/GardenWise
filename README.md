@@ -5,7 +5,13 @@ Capstone project: GardenWise
 ```bash
 cd frontend
 npm install
-npm start
+npm run dev
+```
+
+```bash
+# Run locally
+cd frontend
+npm run dev
 ```
 # back end requirements
 ```bash
