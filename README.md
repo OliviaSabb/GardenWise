@@ -15,6 +15,10 @@ npm run dev
 ```
 # back end requirements
 ```bash
+Must have some version of Python 3 
+https://www.python.org/downloads/windows/ (windows download)
+sudo apt install python3 (Linux download)
+
 cd backend
 python3 -m venv venv  # Create a virtual environment, prevents dependency and project conflicts
 source venv/bin/activate (Linux/MacOS)
