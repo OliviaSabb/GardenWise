@@ -27,6 +27,7 @@ function App() {
         <Route path="/garden-planner" element={<GardenPlanner/>}/>
         <Route path="/plant-info" element={<PlantInfo/>}/>
         <Route path="/login" element={<Login/>}/>
+        <Route path="/register" element={<Registration/>}/>
       </Routes>
     </BrowserRouter>    
   );
