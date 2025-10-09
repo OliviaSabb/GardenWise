@@ -5,30 +5,70 @@
   text-align: center;
 }
 
+main {
+  margin-top: 64px; 
+}
+
+body {
+  margin: 0;
+}
+
 nav {
-  position: fixed;   /* keeps it pinned */
-  top: 0;            /* stick to top */
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  padding: 1rem;
-  background: #f9f9f9; /* light background so it’s visible */
+
+  display: flex;
+  align-items: center;
+  background: #40a158;
+  height: 64px;
+  padding: 0;
+
+  justify-content: flex-start;
+  
 }
-body {
-  margin: 0;         /* remove default margins */
+
+.nav-left {
+  display: flex;
+  height: 100%;
 }
-main {
-  margin-top: 60px;  /* offset so page content isn’t hidden behind nav */
+
+.nav-spacer {
+  flex: 1;
 }
+
+.nav-right {
+  display: flex;
+  height: 100%;
+}
+
 .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  height: 100%;
+  width: 120px; 
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  background: #007bff;
   color: white;
-  border-radius: 6px;
+  background: #40a158;
+  border: none;
+  border-right: 1px solid #2e7a43;
+
+  font-weight: bold;
   transition: background 0.2s;
 }
 
-.btn:hover {
-  background: #0056b3;
+.login-btn {
+  border-left: 1px solid #2e7a43;
+  
 }
 
+.btn:hover {
+  background: #378b4c;
+}
+
+a:hover {
+  color: white;
+}
