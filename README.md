@@ -30,3 +30,6 @@ python manage.py runserver (for Django development server)
 
 To access the Django admin interface, go to http://127.0.0.1:8000/admin/ after user creation, and log in using the super user acc you just made
 ```
+# Other dependencies (Ignore for now)
+pip install djangorestframework
+pip install django-cors-headers
