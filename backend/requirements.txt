@@ -1,14 +1,8 @@
-# Django
-Django==5.2.6
-
-# Database
-psycopg2-binary==2.9.9  # If using PostgreSQL
-
-mysqlclient==2.2.5 # if using MySQL
-
-# REST Framework (if used)
+asgiref==3.10.0
+Django==5.2.7
+django-cors-headers==4.9.0
 djangorestframework==3.16.1
-
-# Other dependencies
-requests==2.31.0
-beautifulsoup4==4.12.3
+djangorestframework_simplejwt==5.5.1
+PyJWT==2.10.1
+sqlparse==0.5.3
+typing_extensions==4.15.0
