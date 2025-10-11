@@ -5,6 +5,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+# Defines a custom user model (structure of stored user data) and manager for handling account creation, authentication, and admin access
 # Custom user manager
 class AccountManager(BaseUserManager):
     def create_user(self, username, password=None):
@@ -35,7 +36,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-
 
 # We can change thse variables later if need be
 # Main Idea is to save plant variables seperately, then combine them into one garden at runtime based on what account they are tied to.   

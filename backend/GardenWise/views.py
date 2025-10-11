@@ -9,6 +9,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+# Handles user registration, authentication (JWT tokens), and provides a simple home API endpoint for GardenWise
+
+# Displays a welcome message and available API endpoints
 class HomeView(APIView):
     def get(self, request):
         return Response({
@@ -26,7 +29,7 @@ class RegisterView(generics.CreateAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
 
-# Custom token serializer to include username
+# Customizes JWT tokens to include the username field
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -34,6 +37,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         return token
 
+# Handles login requests and issues JWT access and refresh tokens
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 

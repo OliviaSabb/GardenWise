@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import Account
 from django.contrib.auth.hashers import make_password
 
+# this file is the middle layer between the database and the API, ensuring data is validated, secure, and correctly formatted.
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
