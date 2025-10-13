@@ -30,13 +30,25 @@ main{
 .gp-panel-center {
     display: flex;
     flex-direction: column;
+    background-color: yellow;
 }
 
 .gp-grid-toolbar {
     display: flex;
-    justify-content: space-between;
+    background-color: red;
+
+    padding: .5rem .75rem;
+}
+
+.gp-tools {
+    background-color: blue;
+    display: flex;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
     gap: .5rem;
+    
 }
 
 .gp-grid-container {
@@ -48,7 +60,7 @@ main{
 
 .gp-grid {
     display: grid;
-    grid-template-columns: repeat(10, 64px);
+    grid-template-columns: repeat(10, 64px); /* TODO; decide size etc*/
     grid-auto-rows: 64px;
     gap:4px;
     background: #fff;
@@ -82,6 +94,6 @@ main{
 
 @media (max-width: 1024px) {
   .gp-layout { grid-template-columns: 1fr; }
-  .gp-pane--center { order: 1; }
-  .gp-pane--left, .gp-pane--right { order: 2; }
+  .gp-panel-center { order: 1; }
+  .gp-panel-left, .gp-panel-right { order: 2; }
 }

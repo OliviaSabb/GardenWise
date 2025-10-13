@@ -1,9 +1,31 @@
-import React from "react";
+import React, {useState, useMemo} from "react";
 import "./GardenPlanner.css"
 
 function GardenPlanner(){
+
+    const numberRows = 10;
+    const numberCols = 10;
+    const cellSize = 64; // pixels
+
+
+
+    const [rows, setRows] = useState(10);
+    const [cols, setCols] = useState(10);
+    const [cell, setCell] = useState(64);
+    
+
+  const cells = useMemo(() => {
+    return Array.from({ length: rows * cols }, (_, i) => {
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      return { r, c, key: `${r}-${c}` };
+    });
+  }, [rows, cols]);
+
+
+
     return (
-        <main>
+        <main className="gp-planner">
             <div className="gp-layout">
 
                 {/* Left panel: Plant list*/}
@@ -24,19 +46,35 @@ function GardenPlanner(){
 
                 {/* Middle panel: Garden grid planner*/}
                 <div className="gp-panel gp-panel-center">
-                    <div className="gp-toolbar"> Toolbar </div>
+                    <div className="gp-grid-toolbar">
+                        <div className="gp-tools">
+                            <div>Save</div>
+                            <div>Reset</div>
+                            <div>Zoom In +</div>
+                            <div>Zoom Out -</div>
+                        </div>
+
+                    </div>
 
                     <div className="gp-grid-title">Garden Planner Grid</div>
 
                     <div className="gp-grid-container">
                         <div
                             className="gp-grid" 
-                            data-cols="10" 
-                            data-rows="10" 
-                            data-cell-size="64"
+                            // data-cols={numberCols} 
+                            // data-rows={numberRows} a
+                            // data-cell-size={cellSize}
+                            // style={{
+                            //     //for dynaic changing grid
+                            //     "--cols": numberCols,
+                            //     "--rows": numberRows,
+                            //     "--cell": `${cellSize}px`,
+                            // }}
                         >
                             {/*cells will be here */}
-                            <div className="gp-cell" tabIndex={0} data-col="1" data-row="1">cell1</div>
+                            {cells.map(({r, c, key}) => (
+                                <div key={key} className="gp-cell" data-row={r} data-col={c}/>
+                            ))}
                         </div>
                     </div>
                 </div>
