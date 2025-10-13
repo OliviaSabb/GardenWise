@@ -9,7 +9,7 @@ function GardenPlanner(){
 
 
 
-    const [rows, setRows] = useState(10);
+    const [rows, setRows] = useState(100);
     const [cols, setCols] = useState(10);
     const [cell, setCell] = useState(64);
     

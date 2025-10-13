@@ -54,7 +54,7 @@ main{
 .gp-grid-container {
     position: relative;
     flex: 1;
-    overflow: auto;
+    /* overflow: auto; */
     padding: var(--gap);
 }
 
@@ -67,11 +67,16 @@ main{
     padding: 6px;
     border-radius: 8px;
     border: 1px dashed #cfcfcf;
+    max-height: 90vh;
+
+    overflow: auto;
+    overflow-y:scroll; 
 }
 
 .gp-cell {
     border: 1px solid var(--border);
     border-radius: 4px;
+    
 }
 
 
