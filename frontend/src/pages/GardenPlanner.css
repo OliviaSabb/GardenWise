@@ -1,0 +1,104 @@
+:root { --gap: 1rem; --panel-bg: #f8f8f8; --border: #e5e5e5; --nav-h: 64px; }
+
+main{
+    color: black;
+}
+
+.gp-planner {
+    padding: var(--gap);
+}
+
+.gp-layout{
+    display: grid;
+    grid-template-columns: 280px minmax(600px, 1fr) 320px;
+    gap: var(--gap);
+    min-height: calc(100vh - var(--nav-h) - var(--gap)*2);
+}
+
+.gp-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
+
+
+
+
+.gp-panel-center {
+    display: flex;
+    flex-direction: column;
+    background-color: yellow;
+}
+
+.gp-grid-toolbar {
+    display: flex;
+    background-color: red;
+
+    padding: .5rem .75rem;
+}
+
+.gp-tools {
+    background-color: blue;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: .5rem;
+    
+}
+
+.gp-grid-container {
+    position: relative;
+    flex: 1;
+    /* overflow: auto; */
+    padding: var(--gap);
+}
+
+.gp-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 64px); /* TODO; decide size etc*/
+    grid-auto-rows: 64px;
+    gap:4px;
+    background: #fff;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px dashed #cfcfcf;
+    max-height: 90vh;
+
+    overflow: auto;
+    overflow-y:scroll; 
+}
+
+.gp-cell {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    
+}
+
+
+
+
+
+.gp-plant-list {
+    padding: .75rem;
+    margin: 0;
+    list-style: none;
+    overflow-y: auto;
+}
+
+.gp-plant-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: black;
+}
+
+@media (max-width: 1024px) {
+  .gp-layout { grid-template-columns: 1fr; }
+  .gp-panel-center { order: 1; }
+  .gp-panel-left, .gp-panel-right { order: 2; }
+}

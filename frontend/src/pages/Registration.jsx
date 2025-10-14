@@ -3,11 +3,13 @@ import {useState} from "react";
 
 
 function Registration(){
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
     const [error, setError] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if(password !== confirm) {
@@ -16,7 +18,37 @@ function Registration(){
         }
 
         setError("");
-        alert("Registration successful!");
+
+        //alert("Registration successful!");
+
+        const payload = {
+            username,
+            email,
+            password
+        };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/register/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload)
+            });
+
+            const text = await res.text(); // try text first to avoid JSON parse issues
+            console.log("Status:", res.status);
+            console.log("Content-Type:", res.headers.get("content-type"));
+            console.log("Body:", text);
+
+            if (response.ok) {
+                alert("Registration successful");
+                Navigate("/login");
+            } else {
+                const data = await response.json();
+                setError(data.detail || "Registration failed");
+            }
+        } catch (err) {
+            setError("Server error. Please try again later")
+        }
     };
 
 
@@ -25,8 +57,20 @@ function Registration(){
         <div>
             <h2>Create an Account</h2>
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Name" required></input>
-                <input type="email" placeholder="Email" required/>
+                <input 
+                    type="text" 
+                    placeholder="Username" 
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <input 
+                    type="email" 
+                    placeholder="Email" 
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
                 <input 
                     type="password" 
                     placeholder="Password"                   
