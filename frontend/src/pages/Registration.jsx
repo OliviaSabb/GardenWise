@@ -34,7 +34,7 @@ function Registration(){
                 body: JSON.stringify(payload)
             });
 
-            const text = await res.text(); // try text first to avoid JSON parse issues
+            const text = await res.text(); 
             console.log("Status:", res.status);
             console.log("Content-Type:", res.headers.get("content-type"));
             console.log("Body:", text);
