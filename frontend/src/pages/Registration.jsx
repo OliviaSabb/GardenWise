@@ -1,5 +1,6 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
+
 
 
 function Registration(){
@@ -8,6 +9,7 @@ function Registration(){
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,14 +36,10 @@ function Registration(){
                 body: JSON.stringify(payload)
             });
 
-            const text = await res.text(); 
-            console.log("Status:", res.status);
-            console.log("Content-Type:", res.headers.get("content-type"));
-            console.log("Body:", text);
-
             if (response.ok) {
                 alert("Registration successful");
-                Navigate("/login");
+                navigate("/login");
+                return;
             } else {
                 const data = await response.json();
                 setError(data.detail || "Registration failed");

@@ -1,10 +1,11 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,14 +24,9 @@ function Login() {
                 body: JSON.stringify(payload)
             });
 
-            const text = await res.text(); // try text first to avoid JSON parse issues
-            console.log("Status:", res.status);
-            console.log("Content-Type:", res.headers.get("content-type"));
-            console.log("Body:", text);
-
             if (response.ok) {
                 alert("Login successful");
-                Navigate("/garden-planner");
+                navigate("/garden-planner");
             } else {
                 const data = await response.json();
                 setError(data.detail || "Login failed");
