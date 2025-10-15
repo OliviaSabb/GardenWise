@@ -3,6 +3,14 @@ import "./GardenPlanner.css"
 
 function GardenPlanner(){
 
+    // Trying to verify the user is logged in to access garden planner page
+    const userLoggedIn = null;
+    if(!userLoggedIn) {
+        return <p>You must be logged in to view this page!!!</p>
+    }
+
+
+
     const numberRows = 10;
     const numberCols = 10;
     const cellSize = 64; // pixels
