@@ -1,13 +1,15 @@
 
 # GardenWise/views.py
 
-from rest_framework import generics
+from rest_framework import generics, status
 from .models import Account
-from .serializers import AccountSerializer
+from .models import PlantType
+from .serializers import AccountSerializer, PlantTypeSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import requests
 
 # Handles user registration, authentication (JWT tokens), and provides a simple home API endpoint for GardenWise
 
@@ -22,7 +24,6 @@ class HomeView(APIView):
                 # you can add plant endpoints later
             }
         })
-
 
 # Registration endpoint
 class RegisterView(generics.CreateAPIView):
@@ -41,3 +42,16 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+class PlantTypePropogation(APIView):
+    def get(self, request, format=None):
+        plants = PlantType.objects.all()
+        serializer = PlantTypeSerializer(plants, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        api_data = requests.get("https://trefle.io/api/v1/plants/?token=usr-gpChDFS-5C18WHWSjBaxy3sXmq2mJ85tnevytrJBva0&filter[common_name]=beach%20strawberry,coconut").json()
+        serializer = PlantTypeSerializer(data = api_data['data'], many=True)
+        if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

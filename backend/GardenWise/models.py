@@ -38,15 +38,22 @@ class Account(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 # We can change thse variables later if need be
+class PlantType(models.Model):
+    common_name = models.CharField()
+    scientific_name = models.CharField()
+    status = models.CharField()
+    growth_rate = models.CharField(default = "NULL")
+
+    def __str__(self):
+        return self.common_name
+
+
 # Main Idea is to save plant variables seperately, then combine them into one garden at runtime based on what account they are tied to.   
-class Plant(models.Model):
-    type = models.CharField()
+class GardenPlant(models.Model):
+    type = PlantType()
     user = Account()
     position = models.CharField() # Represent position with letters for column and numbers for row? (like in chess; A4, B2, etc)
     time_planted = models.DateTimeField()
     time_watered = models.DateTimeField()
     health = models.CharField()
 
-
-
-    
