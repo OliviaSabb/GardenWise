@@ -1,26 +1,36 @@
 import React, {useMemo, useRef, useState} from "react";
 
 
-function GardenPlannerGridFlexbox() {
+function GardenPlannerGridFlexbox({selectedPlant}) {
 
-        //const numberRows = 10;
-        //const numberCols = 10;
-        const cellSize = 64; // pixels
+    //const numberRows = 10;
+    //const numberCols = 10;
+    //const cellSize = 64; // pixels
+
+
+
+    const [rows, setRows] = useState(2);
+    const [cols, setCols] = useState(8);
+    const [cellSize, setCellSize] = useState(64);
     
-    
-    
-        const [rows, setRows] = useState(2);
-        const [cols, setCols] = useState(8);
-        const [cell, setCell] = useState(64);
+    const [placement, setPlacement] = useState({});
+
+    const handleCellClick = (r, c) => {
+        console.log(`Clicked cell at row ${r}, col ${c} with ${selectedPlant}`);
         
-    
-      const cells = useMemo(() => {
+        if (!selectedPlant) return;
+        
+        const key = `${r}-${c}`; // cell coords kinda
+        setPlacement(prev => ({ ...prev, [key]: selectedPlant })); 
+    }
+
+    const cells = useMemo(() => {
         return Array.from({ length: rows * cols }, (_, i) => {
-          const r = Math.floor(i / cols);
-          const c = i % cols;
-          return { r, c, key: `${r}-${c}` };
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        return { r, c, key: `${r}-${c}` };
         });
-      }, [rows, cols]);
+    }, [rows, cols]);
 
     return(
         <div>
@@ -72,7 +82,15 @@ function GardenPlannerGridFlexbox() {
                 >
                     {/*cells will be here */}
                     {cells.map(({r, c, key}) => (
-                        <div key={key} className="gp-cell" data-row={r} data-col={c}/>
+                        <div 
+                            key={key} 
+                            className="gp-cell" 
+                            data-row={r} 
+                            data-col={c}
+                            onClick={() => handleCellClick(r, c)}
+                        >
+                           {placement[key] || ""}
+                        </div>
                     ))}
                 </div>
             </div>

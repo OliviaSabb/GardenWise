@@ -11,7 +11,19 @@ function GardenPlanner(){
     //     or can render some sort of info page here instead with register login buttons
     // }
 
-
+    // plants for testing purposes
+    const PLANTS = [
+        "Tomato",
+        "Cucumber",
+        "Pumpkin",
+        "Carrot",
+        "Lettuce",
+        "Blackberry",
+        "Strawberry",
+        "Rosemary",
+        "Mint",
+        "Basil"
+    ];
 
     const numberRows = 10;
     const numberCols = 10;
@@ -24,19 +36,22 @@ function GardenPlanner(){
     const [cell, setCell] = useState(64);
     
     // build the grid based off rows and columns
-    const cells = useMemo(() => {
-        return Array.from({ length: rows * cols }, (_, i) => {
-        const r = Math.floor(i / cols);
-        const c = i % cols;
-        return { r, c, key: `${r}-${c}` };
-        });
-    }, [rows, cols]);
+    // const cells = useMemo(() => {
+    //     return Array.from({ length: rows * cols }, (_, i) => {
+    //     const r = Math.floor(i / cols);
+    //     const c = i % cols;
+    //     return { r, c, key: `${r}-${c}` };
+    //     });
+    // }, [rows, cols]);
 
     // select a plant
-    
+    const [selectedPlant, setSelectedPlant] = useState(null);
 
 
     // place a plant
+    const [placement, setPlacement] = useState({}); 
+
+
 
     return (
         <main className="gp-planner">
@@ -45,7 +60,18 @@ function GardenPlanner(){
                 {/* Left panel: Plant list*/}
                 <div className="gp-panel gp-panel-left">
                     <ul className="gp-plant-list">
-                        <li className="gp-plant-item">Tomato</li>
+                        {PLANTS.map((p) => (
+                            <li 
+                            className="gp-plant-item"
+                            onClick={() => {
+                                console.log("Selected ", p);
+                                setSelectedPlant(p);
+                            }}
+                            >
+                                {p}
+                            </li>
+                        ))}
+                        {/* <li className="gp-plant-item">Tomato</li>
                         <li className="gp-plant-item">Cucumber</li>
                         <li className="gp-plant-item">Pumpkin</li>
                         <li className="gp-plant-item">Carrot</li>
@@ -54,13 +80,15 @@ function GardenPlanner(){
                         <li className="gp-plant-item">Strawberry</li>
                         <li className="gp-plant-item">Rosemary</li>
                         <li className="gp-plant-item">Mint</li>
-                        <li className="gp-plant-item">Basil</li>
+                        <li className="gp-plant-item">Basil</li> */}
                     </ul>
                 </div>
 
                 {/* Middle panel: Garden grid planner*/}
                 <div className="gp-panel gp-panel-center">
-                    <GardenPlannerGridFlexbox/>
+                    <GardenPlannerGridFlexbox
+                        selectedPlant={selectedPlant}
+                    />
                 </div>
                 {/* <div className="gp-panel gp-panel-center">
                     <GardenPlannerGridSVG/>
