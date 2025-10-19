@@ -8,17 +8,21 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 # Defines a custom user model (structure of stored user data) and manager for handling account creation, authentication, and admin access
 # Custom user manager
 class AccountManager(BaseUserManager):
-    def create_user(self, username, password=None):
+    def create_user(self, username, email=None, password=None):
         if not username:
             raise ValueError("Username is required")
-        user = self.model(username=username)
+        if not email:
+            raise ValueError("Email is required")
+        
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email)
         user.set_password(password)  # hashes password
         user.is_active = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password):
-        user = self.create_user(username=username, password=password)
+    def create_superuser(self, username, email=None, password=None): #create django admin account
+        user = self.create_user(username=username, email=email, password=password)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -27,12 +31,14 @@ class AccountManager(BaseUserManager):
 # Custom user model
 class Account(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=32, unique=True)
+    email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = AccountManager()
 
     USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email'] 
 
     def __str__(self):
         return self.username

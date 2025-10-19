@@ -7,12 +7,19 @@ from django.contrib.auth.hashers import make_password
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'username', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_username(self, value):
         if not value:
             raise serializers.ValidationError("Username cannot be empty")
+        return value
+    
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError("Email cannot be empty")
+        if Account.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email is already in use")
         return value
 
     def validate_password(self, value):
