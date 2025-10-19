@@ -1,6 +1,6 @@
 # GardenWise/serializers.py
 from rest_framework import serializers
-from .models import Account
+from .models import Account, PlantType
 from django.contrib.auth.hashers import make_password
 
 # this file is the middle layer between the database and the API, ensuring data is validated, secure, and correctly formatted.
@@ -30,3 +30,8 @@ class AccountSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return Account.objects.create(**validated_data)
+    
+class PlantTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlantType
+        fields = '__all__'

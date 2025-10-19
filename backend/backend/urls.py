@@ -18,7 +18,7 @@ Including another URLconf
 
 # gardenwise_project/urls.py
 from django.urls import path
-from GardenWise.views import HomeView, RegisterView, MyTokenObtainPairView
+from GardenWise.views import HomeView, RegisterView, MyTokenObtainPairView, PlantTypePropogation
 from django.contrib import admin
 
 urlpatterns = [
@@ -28,4 +28,5 @@ urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='register'),
     # JWT login
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/plantType/', PlantTypePropogation.as_view(), name='plantType')
 ]

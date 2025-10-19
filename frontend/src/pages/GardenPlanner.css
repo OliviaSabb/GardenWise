@@ -60,8 +60,8 @@ main{
 
 .gp-grid {
     display: grid;
-    grid-template-columns: repeat(10, 64px); /* TODO; decide size etc*/
-    grid-auto-rows: 64px;
+    grid-template-columns: repeat(var(--cols), var(--cellSize)); /* TODO; decide size etc*/
+    grid-template-rows: repeat(var(--rows), var(--cellSize));
     gap:4px;
     background: #fff;
     padding: 6px;
@@ -76,7 +76,6 @@ main{
 .gp-cell {
     border: 1px solid var(--border);
     border-radius: 4px;
-    
 }
 
 
