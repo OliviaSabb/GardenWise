@@ -46,9 +46,12 @@ class Account(AbstractBaseUser, PermissionsMixin):
 # We can change thse variables later if need be
 class PlantType(models.Model):
     common_name = models.CharField()
-    scientific_name = models.CharField()
-    status = models.CharField()
+    scientific_name = models.CharField(default = "NULL")
+    status = models.CharField(default = "NULL")
     growth_rate = models.CharField(default = "NULL")
+    ph = models.FloatField(default = 0.0)
+    temperture = models.IntegerField(default = 0) # In Fahrenheit
+
 
     def __str__(self):
         return self.common_name
