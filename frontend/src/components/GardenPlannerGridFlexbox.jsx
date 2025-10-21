@@ -1,28 +1,7 @@
 import React, {useMemo, useRef, useState} from "react";
 
 
-function GardenPlannerGridFlexbox({selectedPlant}) {
-
-    //const numberRows = 10;
-    //const numberCols = 10;
-    //const cellSize = 64; // pixels
-
-
-
-    const [rows, setRows] = useState(2);
-    const [cols, setCols] = useState(8);
-    const [cellSize, setCellSize] = useState(64);
-    
-    const [placement, setPlacement] = useState({});
-
-    const handleCellClick = (r, c) => {
-        console.log(`Clicked cell at row ${r}, col ${c} with ${selectedPlant}`);
-        
-        if (!selectedPlant) return;
-        
-        const key = `${r}-${c}`; // cell coords kinda
-        setPlacement(prev => ({ ...prev, [key]: selectedPlant })); 
-    }
+function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, getPlantName}) {
 
     const cells = useMemo(() => {
         return Array.from({ length: rows * cols }, (_, i) => {
@@ -34,42 +13,7 @@ function GardenPlannerGridFlexbox({selectedPlant}) {
 
     return(
         <div>
-            <div className="gp-grid-toolbar">
-                <div className="gp-tools">
-                    <div>Save</div>
-                    <div>Reset</div>
-                    <div>Zoom In +</div>
-                    <div>Zoom Out -</div>
-                    <div>
-                        <label htmlFor="cols">Length: </label>
-                        <input
-                            id="rows"
-                            type="number"
-                            step="1"
-                            min="1"
-                            max="10"
-                            value={rows}
-                            onChange={(e) => setRows(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="cols">Width: </label>
-                        <input
-                            id="cols"
-                            type="number"
-                            step="1"
-                            min="1"
-                            max="8"
-                            value={cols}
-                            onChange={(e) => setCols(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-            </div>
-
-            <div className="gp-grid-title">Garden Planner Grid</div>
-
+  
             <div className="gp-grid-container">
                 <div
                     className="gp-grid" 
@@ -77,21 +21,25 @@ function GardenPlannerGridFlexbox({selectedPlant}) {
                         //for dynaic changing grid
                         "--cols": cols,
                         "--rows": rows,
-                        "--cellSize": `${cellSize}px` //maybe allow cell size changes
+                        "--cellSize": `${cell}px` //maybe allow cell size changes
                     }}
                 >
                     {/*cells will be here */}
-                    {cells.map(({r, c, key}) => (
-                        <div 
-                            key={key} 
-                            className="gp-cell" 
-                            data-row={r} 
-                            data-col={c}
-                            onClick={() => handleCellClick(r, c)}
-                        >
-                           {placement[key] || ""}
-                        </div>
-                    ))}
+                    {cells.map(({r, c, key}) => {
+                        const id = placement[key];
+                        const label = id ? getPlantName?.(id) : "";
+                        return (
+                            <div 
+                                key={key} 
+                                className="gp-cell" 
+                                data-row={r} 
+                                data-col={c}
+                                onClick={() => onCellClick(r, c)}
+                            >
+                                {label}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

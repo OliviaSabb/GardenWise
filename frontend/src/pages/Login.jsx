@@ -24,8 +24,14 @@ function Login() {
                 body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
+            const data = await response.json();
+
+            if (response.ok && data.access) {
                 alert("Login successful");
+
+                localStorage.setItem("access", data.access);
+                localStorage.setItem("refresh", data.refresh);
+
                 navigate("/garden-planner");
                 return;
             }
