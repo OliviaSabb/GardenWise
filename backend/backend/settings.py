@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+import dj_database_url 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,10 +103,18 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default='postgresql://gardenwise_user:PGomaIPKXcMcdsCA4vX3HpfZfjjdQhkQ@dpg-d3s6736mcj7s73av1ntg-a.oregon-postgres.render.com/gardenwise',
+        conn_max_age=600
+    )
+
+
+      #/ 'default': {
+      #/  'ENGINE': 'django.db.backends.sqlite3',
+      #/   'NAME': BASE_DIR / 'db.sqlite3', 
+      #/ }
 }
 
 
