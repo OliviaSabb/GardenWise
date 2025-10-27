@@ -34,3 +34,4 @@ for filename in os.listdir(folder):
         os.rename(old_path, new_path)
 
     
+# needs editing if more plants are added
