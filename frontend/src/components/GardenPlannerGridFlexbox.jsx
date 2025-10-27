@@ -18,7 +18,7 @@ function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, get
                 <div
                     className="gp-grid" 
                     style={{
-                        //for dynaic changing grid
+                        // for dynaic changing grid
                         "--cols": cols,
                         "--rows": rows,
                         "--cellSize": `${cell}px` //maybe allow cell size changes
