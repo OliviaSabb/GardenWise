@@ -47,10 +47,13 @@ class Account(AbstractBaseUser, PermissionsMixin):
 class PlantType(models.Model):
     common_name = models.CharField()
     scientific_name = models.CharField(default = "NULL")
-    status = models.CharField(default = "NULL")
     growth_rate = models.CharField(default = "NULL")
     ph = models.FloatField(default = 0.0)
-    temperture = models.IntegerField(default = 0) # In Fahrenheit
+    temperture = models.CharField(default = "NULL")
+    season = models.CharField(default = "NULL")
+    zone = models.CharField(default = "NULL")
+    spacing = models.CharField(default = "NULL")
+    
 
 
     def __str__(self):
