@@ -53,6 +53,9 @@ class PlantType(models.Model):
     season = models.CharField(default = "NULL")
     zone = models.CharField(default = "NULL")
     spacing = models.CharField(default = "NULL")
+    watering_time = models.IntegerField(default = "0")
+    soil = models.CharField(default = "NULL")
+    facts = models.TextField(default = "NULL")
     
 
 
@@ -62,10 +65,11 @@ class PlantType(models.Model):
 
 # Main Idea is to save plant variables seperately, then combine them into one garden at runtime based on what account they are tied to.   
 class GardenPlant(models.Model):
-    type = PlantType()
-    user = Account()
+    type = models.ForeignKey(PlantType, on_delete=models.CASCADE, default = PlantType.objects.first().pk)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, default = Account.objects.first().pk)
     position = models.CharField() # Represent position with letters for column and numbers for row? (like in chess; A4, B2, etc)
     time_planted = models.DateTimeField()
     time_watered = models.DateTimeField()
-    health = models.CharField()
+    health = models.CharField(default = "NULL")
+    notes = models.TextField(default = "NULL")
 

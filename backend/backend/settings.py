@@ -96,7 +96,6 @@ REST_FRAMEWORK = {
 DATABASES = {
     
     'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
         default='postgresql://gardenwise_user:PGomaIPKXcMcdsCA4vX3HpfZfjjdQhkQ@dpg-d3s6736mcj7s73av1ntg-a.oregon-postgres.render.com/gardenwise',
         conn_max_age=600
     )
