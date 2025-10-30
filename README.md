@@ -34,3 +34,7 @@ To access the Django admin interface, go to http://127.0.0.1:8000/admin/ after u
 pip install djangorestframework
 pip install django-cors-headers
 pip install requests
+pip install psycopg2-binary
+pip install dj-database-url
+
+# Database Layout:

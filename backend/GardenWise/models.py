@@ -47,10 +47,16 @@ class Account(AbstractBaseUser, PermissionsMixin):
 class PlantType(models.Model):
     common_name = models.CharField()
     scientific_name = models.CharField(default = "NULL")
-    status = models.CharField(default = "NULL")
-    growth_rate = models.CharField(default = "NULL")
+    growth_rate = models.IntegerField(default = 0)
     ph = models.FloatField(default = 0.0)
-    temperture = models.IntegerField(default = 0) # In Fahrenheit
+    temperture = models.CharField(default = "NULL")
+    season = models.CharField(default = "NULL")
+    zone = models.CharField(default = "NULL")
+    spacing = models.CharField(default = "NULL")
+    watering_time = models.IntegerField(default = "0")
+    soil = models.CharField(default = "NULL")
+    facts = models.TextField(default = "NULL")
+    
 
 
     def __str__(self):
@@ -66,12 +72,13 @@ class Garden(models.Model):
     
 # Main Idea is to save plant variables seperately, then combine them into one garden at runtime based on what account they are tied to.   
 class GardenPlant(models.Model):
-    garden = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name='garden_plants', null=True)
-    type = models.ForeignKey(PlantType, on_delete=models.CASCADE, related_name='plants')
+    type = models.ForeignKey(PlantType, on_delete=models.CASCADE, default = PlantType.objects.first().pk)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE, default = Account.objects.first().pk)
     position = models.CharField() # Represent position with letters for column and numbers for row? (like in chess; A4, B2, etc)
-    time_planted = models.DateTimeField(auto_now_add=True)
-    time_watered = models.DateTimeField(auto_now=True)
-    health = models.CharField(max_length=100)
+    time_planted = models.DateTimeField()
+    time_watered = models.DateTimeField()
+    health = models.CharField(default = "NULL")
+    notes = models.TextField(default = "NULL")
 
 def __str__(self):
     return f"{self.type.common_name} in {self.garden.name} at {self.position}"
