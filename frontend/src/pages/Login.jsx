@@ -27,11 +27,9 @@ function Login() {
             const data = await response.json();
 
             if (response.ok && data.access) {
+                localStorage.setItem("access_token", data.access);
+                localStorage.setItem("refresh_token", data.refresh);
                 alert("Login successful");
-
-                localStorage.setItem("access", data.access);
-                localStorage.setItem("refresh", data.refresh);
-
                 navigate("/garden-planner");
                 return;
             }
@@ -69,7 +67,7 @@ function Login() {
                 />
                 {error && <p>{error}</p>}
 
-                <button type="submit">Register</button>
+                <button type="submit">Login</button>
             </form>
             <p>
                 Don't have an account? <Link to="/register">Register here</Link>

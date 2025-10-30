@@ -17,16 +17,38 @@ Including another URLconf
 # Routes: admin panel, home, user registration, and JWT login endpoints
 
 # gardenwise_project/urls.py
-from django.urls import path
-from GardenWise.views import HomeView, RegisterView, MyTokenObtainPairView, PlantTypePropogation
 from django.contrib import admin
+from django.urls import path
+from GardenWise.views import (
+    HomeView, RegisterView,
+    MyTokenObtainPairView, LogoutView,
+    GardenListCreateView, GardenRetrieveUpdateDestroyView,
+    GardenPlantListCreateView, GardenPlantRetrieveUpdateDestroyView,
+    PlantTypePropogation
+)
+from rest_framework_simplejwt.views import TokenBlacklistView
+# main router
+# router = routers.DefaultRouter()
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # path for django admin
-    path('', HomeView.as_view(), name='home'),  # root 
-    # User registration
+    path('admin/', admin.site.urls),
+    path('', HomeView.as_view(), name='home'),
+
+    # Auth
     path('api/register/', RegisterView.as_view(), name='register'),
-    # JWT login
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/plantType/', PlantTypePropogation.as_view(), name='plantType')
+    path('api/token/refresh/', LogoutView.as_view(), name='token_refresh'),
+    path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
+
+    # Gardens
+    path('api/gardens/', GardenListCreateView.as_view(), name='garden_list'),
+    path('api/gardens/<int:pk>/', GardenRetrieveUpdateDestroyView.as_view(), name='garden_detail'),
+
+    # Plants within gardens
+    path('api/gardens/<int:garden_id>/plants/', GardenPlantListCreateView.as_view(), name='garden_plants'),
+    path('api/gardens/<int:garden_id>/plants/<int:pk>/', GardenPlantRetrieveUpdateDestroyView.as_view(), name='garden_plant_detail'),
+
+    # Plant info
+    path('api/plantType/', PlantTypePropogation.as_view(), name='plantType'),
 ]

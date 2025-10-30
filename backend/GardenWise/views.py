@@ -1,16 +1,16 @@
 
 # GardenWise/views.py
-
-from rest_framework import generics, status
-from .models import Account
-from .models import PlantType
-from .serializers import AccountSerializer, PlantTypeSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken  # Import RefreshToken
+from rest_framework.exceptions import NotFound
 import requests
-
+from rest_framework.permissions import AllowAny
+from .models import Account, PlantType, Garden, GardenPlant
+from .serializers import AccountSerializer, PlantTypeSerializer, GardenSerializer, GardenPlantSerializer
 # Handles user registration, authentication (JWT tokens), and provides a simple home API endpoint for GardenWise
 
 # Displays a welcome message and available API endpoints
@@ -29,6 +29,7 @@ class HomeView(APIView):
 class RegisterView(generics.CreateAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    permission_classes = [AllowAny]
 
 # Customizes JWT tokens to include the username field
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -59,3 +60,61 @@ class PlantTypePropogation(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GardenListCreateView(generics.ListCreateAPIView):
+    serializer_class = GardenSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Garden.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class GardenRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = GardenSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Garden.objects.filter(user=user)
+
+class GardenPlantListCreateView(generics.ListCreateAPIView):
+    serializer_class = GardenPlantSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        garden_id = self.kwargs['garden_id']
+        return GardenPlant.objects.filter(garden__id=garden_id, garden__user=self.request.user)
+
+    def perform_create(self, serializer):
+        garden_id = self.kwargs['garden_id']
+        try:
+            garden = Garden.objects.get(pk=garden_id, user=self.request.user)
+            serializer.save(garden=garden)
+        except Garden.DoesNotExist:
+            raise NotFound("Garden not found or does not belong to user.")
+
+
+class GardenPlantRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = GardenPlantSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        garden_id = self.kwargs['garden_id']
+        return GardenPlant.objects.filter(garden__user=user, garden_id=garden_id)
+
+# Logout View
+class LogoutView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"] #Changed from refresh_token to refresh
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

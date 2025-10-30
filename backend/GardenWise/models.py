@@ -56,13 +56,22 @@ class PlantType(models.Model):
     def __str__(self):
         return self.common_name
 
+class Garden(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE) # ties the garden to a specific user account. If the user is deleted, their garden will be as well.
+    name = models.CharField(max_length=255, default="My Garden")
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.name} - {self.user.username}"
+    
 # Main Idea is to save plant variables seperately, then combine them into one garden at runtime based on what account they are tied to.   
 class GardenPlant(models.Model):
-    type = PlantType()
-    user = Account()
+    garden = models.ForeignKey(Garden, on_delete=models.CASCADE, related_name='garden_plants', null=True)
+    type = models.ForeignKey(PlantType, on_delete=models.CASCADE, related_name='plants')
     position = models.CharField() # Represent position with letters for column and numbers for row? (like in chess; A4, B2, etc)
-    time_planted = models.DateTimeField()
-    time_watered = models.DateTimeField()
-    health = models.CharField()
+    time_planted = models.DateTimeField(auto_now_add=True)
+    time_watered = models.DateTimeField(auto_now=True)
+    health = models.CharField(max_length=100)
 
+def __str__(self):
+    return f"{self.type.common_name} in {self.garden.name} at {self.position}"

@@ -1,6 +1,7 @@
 # GardenWise/serializers.py
 from rest_framework import serializers
-from .models import Account, PlantType
+from .models import Account, PlantType, Garden, GardenPlant
+
 from django.contrib.auth.hashers import make_password
 
 # this file is the middle layer between the database and the API, ensuring data is validated, secure, and correctly formatted.
@@ -28,10 +29,32 @@ class AccountSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        # Hash password before saving
         validated_data['password'] = make_password(validated_data['password'])
-        return Account.objects.create(**validated_data)
+        account = Account.objects.create(**validated_data)
+
+        # Automatically create a default garden for each new account
+        Garden.objects.create(name="Default Garden", user=account)
+
+        return account
+
     
 class PlantTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlantType
+        fields = '__all__'
+
+class GardenPlantSerializer(serializers.ModelSerializer):
+    type_id = serializers.IntegerField(source='type.id', read_only=True)  # numeric PK
+    type_name = serializers.CharField(source='type.common_name', read_only=True)
+    
+    class Meta:
+        model = GardenPlant
+        fields = '__all__'
+
+
+class GardenSerializer(serializers.ModelSerializer):
+    garden_plants = GardenPlantSerializer(many=True, read_only=True) # Nest GardenPlantSerializer
+    class Meta:
+        model = Garden
         fields = '__all__'
