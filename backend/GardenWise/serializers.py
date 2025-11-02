@@ -45,13 +45,13 @@ class PlantTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GardenPlantSerializer(serializers.ModelSerializer):
-    type_id = serializers.IntegerField(source='type.id', read_only=True)  # numeric PK
-    type_name = serializers.CharField(source='type.common_name', read_only=True)
-    
+    type_id = serializers.IntegerField(source='plant_type.id', read_only=True)
+    type_name = serializers.CharField(source='plant_type.common_name', read_only=True)
+
     class Meta:
         model = GardenPlant
         fields = '__all__'
-
+        read_only_fields = ['user', 'garden']
 
 class GardenSerializer(serializers.ModelSerializer):
     garden_plants = GardenPlantSerializer(many=True, read_only=True) # Nest GardenPlantSerializer

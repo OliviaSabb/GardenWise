@@ -20,7 +20,7 @@ const PLANT_INFO = {
         id: "tomato",
         id_numeric: 1,
         name: "Tomato",
-        type: "Vegetable",
+        plant_type: "Vegetable",
         sunlight: "Full Sun",
         spacing: 18,
         water: "Moderate",
@@ -30,7 +30,7 @@ const PLANT_INFO = {
         id: "cucumber",
         id_numeric: 2,
         name: "Cucumber",
-        type: "Vegetable",
+        plant_type: "Vegetable",
         sunlight: "Full Sun",
         spacing: 12,
         water: "High",
@@ -40,7 +40,7 @@ const PLANT_INFO = {
         id: "pumpkin",
         id_numeric: 3,
         name: "Pumpkin",
-        type: "Vegetable",
+        plant_type: "Vegetable",
         sunlight: "Full Sun",
         spacing: 36,
         water: "Moderate",
@@ -50,7 +50,7 @@ const PLANT_INFO = {
         id: "carrot",
         id_numeric: 4,
         name: "Carrot",
-        type: "Vegetable",
+        plant_type: "Vegetable",
         sunlight: "Full Sun",
         spacing: 3,
         water: "Moderate",
@@ -60,7 +60,7 @@ const PLANT_INFO = {
         id: "lettuce",
         id_numeric: 5,
         name: "Lettuce",
-        type: "Vegetable",
+        plant_type: "Vegetable",
         sunlight: "Partial Sun",
         spacing: 8,
         water: "High",
@@ -71,7 +71,7 @@ const PLANT_INFO = {
         id: "rosemary",
         id_numeric: 6,
         name: "Rosemary",
-        type: "Herb",
+        plant_type: "Herb",
         sunlight: "Full Sun",
         spacing: 12,
         water: "Low",
@@ -81,7 +81,7 @@ const PLANT_INFO = {
         id: "mint",
         id_numeric: 7,
         name: "Mint",
-        type: "Herb",
+        plant_type: "Herb",
         sunlight: "Partial Sun",
         spacing: 12,
         water: "High",
@@ -91,7 +91,7 @@ const PLANT_INFO = {
         id: "basil",
         id_numeric: 8,
         name: "Basil",
-        type: "Herb",
+        plant_type: "Herb",
         sunlight: "Full Sun",
         spacing: 10,
         water: "Regular",
@@ -102,7 +102,7 @@ const PLANT_INFO = {
         id: "blackberry",
         id_numeric: 9,
         name: "Blackberry",
-        type: "Fruit",
+        plant_type: "Fruit",
         sunlight: "Full Sun",
         spacing: 36,
         water: "Moderate",
@@ -112,7 +112,7 @@ const PLANT_INFO = {
         id: "strawberry",
         id_numeric: 10,
         name: "Strawberry",
-        type: "Fruit",
+        plant_type: "Fruit",
         sunlight: "Full Sun",
         spacing: 8,
         water: "High",
@@ -144,11 +144,27 @@ function GardenPlanner(){
     const [gardenData, setGardenData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // date/time inputs for planting and watering
+    const [datePlanted, setDatePlanted] = useState("");
+    const [timePlanted, setTimePlanted] = useState("");
+    const [dateWatered, setDateWatered] = useState("");
+    const [timeWatered, setTimeWatered] = useState("");
+
+// helper: combine date and time to ISO format
+const toISOStringLocal = (dateStr, timeStr) => {
+  if (!dateStr) return null;
+  const [year, month, day] = dateStr.split("-");
+  const [hour = "00", minute = "00"] = timeStr ? timeStr.split(":") : [];
+  return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`).toISOString();
+};
 
 
 useEffect(() => {
     const fetchGardenData = async () => {
         const token = localStorage.getItem('access_token');
+
+        console.log("Fetching gardens with token:", localStorage.getItem("access_token"));
+
         if (!token) {
             setError("Please log in to access your garden.");
             setLoading(false);
@@ -158,32 +174,30 @@ useEffect(() => {
         try {
             const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
 
+            const responseData = await response.json(); // read once
+
             if (!response.ok) {
-              const errorData = await response.json().catch(() => ({}));
-                throw new Error(
-                 `HTTP ${response.status}: ${JSON.stringify(errorData)}`
-                );
+                throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
             }
 
-            const data = await response.json();
-            setGardenData(data);
+            setGardenData(responseData);
 
             // build placement map
-// build placement map with names
-const placementMap = {};
-data.forEach(garden => {
-    garden.garden_plants.forEach(plant => {
-        // find plant info from PLANT_INFO by numeric ID
-        const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
-        placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
-    });
-});
-setPlacement(placementMap);
+            const placementMap = {};
+            responseData.forEach(garden => {
+                garden.garden_plants?.forEach(plant => {
+                    const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
+                    placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
+                });
+            });
+            setPlacement(placementMap);
 
 
         } catch (err) {
-            setError("Failed to fetch gardens. Please check your connection.");
-        } finally {
+            console.error("Fetch error:", err);
+            setError(`Failed to fetch gardens: ${err.message}`);
+        }
+        finally {
             setLoading(false); 
         }
     };
@@ -231,8 +245,8 @@ const handleCellClick = async (r, c) => {
                 return;
             }
 
-            console.log("🔍 Garden data:", gardenData);
-            console.log("👤 Logged in user ID:", loggedInUserId);
+            console.log("Garden data:", gardenData);
+            console.log("Logged in user ID:", loggedInUserId);
 
             // Works with both numeric and object forms
            const userGarden = gardenData.find(g => 
@@ -250,7 +264,7 @@ const handleCellClick = async (r, c) => {
             //Used emojis for testing so I could see erroe better
             const gardenId = userGarden.id;
             console.log("Found garden ID:", gardenId);
-            console.log("✅ Matched garden:", userGarden);
+            console.log("Matched garden:", userGarden);
             // Use the numeric id for PlantType
             const plantNumericId = PLANT_INFO[selectedPlantId]?.id_numeric;
             if (!plantNumericId) {
@@ -265,14 +279,13 @@ const handleCellClick = async (r, c) => {
                 `http://127.0.0.1:8000/api/gardens/${gardenId}/plants/`,
                 {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify({
-                        type: plantNumericId,
+                        plant_type: plantNumericId,
                         position: key,
                         health: "Healthy",
+                        time_planted: toISOStringLocal(datePlanted, timePlanted) || new Date().toISOString(),
+                        time_watered: toISOStringLocal(dateWatered, timeWatered) || new Date().toISOString(),
+
                     }),
                 }
             );
@@ -283,13 +296,13 @@ const handleCellClick = async (r, c) => {
             }
 
             const savedPlant = await response.json();
-            console.log("✅ Successfully saved plant to backend:", savedPlant);
+            console.log("Successfully saved plant to backend:", savedPlant);
 
-            // ✅ Update grid instantly
+            // Update grid instantly
             setPlacement(prev => ({ ...prev, [key]: selectedPlantId }));
 
         } catch (error) {
-            console.error("❌ Save failed:", error);
+            console.error("Save failed:", error);
             setError('Failed to save plant data: ' + error.message);
         }
 
@@ -301,9 +314,6 @@ const handleCellClick = async (r, c) => {
         return;
     }
 };
-
-
-
 
     if (loading) {
         return <div>Loading garden data...</div>;

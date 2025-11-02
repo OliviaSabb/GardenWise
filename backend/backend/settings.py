@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url 
+import dj_database_url
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8bks^p2^$wo$g4gg$pi=d)i(z07(=v(jqqiy3orqzh9vlfkpr8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
@@ -59,15 +60,19 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-     "https://localhost:3000",
-     "https://127.0.0.1:3000",
-     "https://localhost:5173",
-     "https://127.0.0.1:5173"
+     "http://localhost:3000",
+     "http://127.0.0.1:3000",
+     "http://localhost:5173",
+     "http://127.0.0.1:5173"
      ]
 
-CORS_ALLOW_ALL_ORIGINS = True;
+CORS_ALLOW_ALL_ORIGINS = False;
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True;
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',
+]
 
 ROOT_URLCONF = 'backend.urls'
 

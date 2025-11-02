@@ -89,13 +89,9 @@ class GardenPlantListCreateView(generics.ListCreateAPIView):
         return GardenPlant.objects.filter(garden__id=garden_id, garden__user=self.request.user)
 
     def perform_create(self, serializer):
-        garden_id = self.kwargs['garden_id']
-        try:
-            garden = Garden.objects.get(pk=garden_id, user=self.request.user)
-            serializer.save(garden=garden)
-        except Garden.DoesNotExist:
-            raise NotFound("Garden not found or does not belong to user.")
-
+        # Use garden_id from URL, not garden_pk
+        garden = Garden.objects.get(pk=self.kwargs['garden_id'])
+        serializer.save(user=self.request.user, garden=garden)
 
 class GardenPlantRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GardenPlantSerializer

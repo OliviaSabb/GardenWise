@@ -1,22 +1,27 @@
-// src/utils/fetchWithAuth.js
-
-
 export async function fetchWithAuth(url, options = {}) {
   let access = localStorage.getItem("access_token");
   const refresh = localStorage.getItem("refresh_token");
 
-  // include Authorization header if we have a token
+  if (!access) {
+    console.error("No access token available. Aborting request.");
+    return new Response(JSON.stringify({ detail: "No access token" }), { status: 401 });
+  }
+
   const headers = {
     "Content-Type": "application/json",
     ...(options.headers || {}),
-    ...(access ? { Authorization: `Bearer ${access}` } : {}),
+    Authorization: `Bearer ${access}`,
   };
 
-  // first attempt
+  console.log("Making request to:", url);
+  console.log("Request headers:", headers);
+
   let response = await fetch(url, { ...options, headers });
 
-  // if token expired or unauthorized, try refreshing
+  // If unauthorized, try refreshing
   if (response.status === 401 && refresh) {
+    console.warn("Access token expired or invalid, attempting refresh...");
+
     try {
       const refreshResponse = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
         method: "POST",
@@ -25,20 +30,17 @@ export async function fetchWithAuth(url, options = {}) {
       });
 
       const data = await refreshResponse.json();
+      console.log("Refresh response:", data);
 
       if (data.access) {
-        // store the new access token
         localStorage.setItem("access_token", data.access);
         access = data.access;
 
-        // retry the original request with new token
-        const retryHeaders = {
-          ...headers,
-          Authorization: `Bearer ${access}`,
-        };
+        const retryHeaders = { ...headers, Authorization: `Bearer ${access}` };
+        console.log("Retrying request with new access token...");
         response = await fetch(url, { ...options, headers: retryHeaders });
       } else {
-        console.warn("Token refresh failed:", data);
+        console.error("Token refresh failed:", data);
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
       }
@@ -47,5 +49,7 @@ export async function fetchWithAuth(url, options = {}) {
     }
   }
 
+  console.log("Response status:", response.status);
   return response;
 }
+
