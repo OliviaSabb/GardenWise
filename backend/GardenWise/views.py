@@ -114,3 +114,9 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+# Plant Type View
+class PlantTypeView(generics.ListCreateAPIView):
+    queryset = PlantType.objects.all()
+    serializer_class = PlantTypeSerializer
+    permission_classes = [permissions.IsAuthenticated]

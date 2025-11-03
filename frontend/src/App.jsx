@@ -5,6 +5,7 @@ import GardenPlanner from './pages/GardenPlanner';
 import PlantInfo from './pages/PlantInfo';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
+import SingularPlantInfo from './pages/SingularPlantInfo';
 import './App.css';
 
 // 🔹 Separate inner app content into a component inside BrowserRouter
@@ -68,6 +69,7 @@ const handleLogout = async () => {
         <Route path="/" element={<Home />} />
         <Route path="/garden-planner" element={<GardenPlanner />} />
         <Route path="/plant-info" element={<PlantInfo />} />
+        <Route path="/plant-info/:id" element={<SingularPlantInfo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
       </Routes>
