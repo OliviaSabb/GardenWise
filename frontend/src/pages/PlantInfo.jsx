@@ -1,6 +1,7 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import { fetchWithAuth } from "../utils/fetchWithAuth";
+import "./PlantInfo.css"
 
 function PlantInfo(){
     const navigate = useNavigate();
@@ -67,6 +68,11 @@ function PlantInfo(){
             </button>
           ))}
         </ul>
+
+        <div className="PlantDesc">
+            <p>Please Click on a Plant!</p>
+        </div>
+
         </main>
     );
 }

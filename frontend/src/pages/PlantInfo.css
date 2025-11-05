@@ -1,0 +1,59 @@
+.PlantInfo {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 20vh;
+    justify-content: start;
+
+    margin: 30px -35px 0 -35px;
+    width: 100vw;
+    height: 90vh;
+    width: 100vw;
+}
+
+.PlantInfo h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3vw;
+
+    background-color: #F0E491;
+    height: 20vh; 
+    margin: 0;
+}
+
+.PlantInfo ul {
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.PlantInfo button {
+    margin: 0;
+    border-radius: 0;
+    background-color: #BBC863;
+    border-top: 1px solid black;
+    transition: background-color 0.4s ease;
+}
+
+.PlantInfo button:hover {
+    background-color: #949e4f;
+}
+
+.PlantDesc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #5c7f50;
+    grid-column-start: 2;
+    grid-row-start: 1;
+    width: 75vw;
+    height: 90vh;
+}
+
+.PlantDesc p {
+    font-size: 3.5vw;
+}
