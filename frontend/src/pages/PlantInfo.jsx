@@ -13,7 +13,12 @@ function PlantInfo(){
     // User verification, do we want users to be logged in to view plant info? 
     const userLoggedIn = localStorage.getItem("access_token");
     if(!userLoggedIn) {
-        return <p>You must be logged in to view this page!</p>
+        return (
+            <main className="PlantInfo">
+                <p>You must be logged in to view this page!</p>
+            </main>
+        
+        )
     }
 
     const handleButtonClick = (item) => {

@@ -8,12 +8,16 @@
     display: grid;
     place-items: center;
     position: relative;
-    background-color: #40a158;
+
+    background: linear-gradient(160deg, #d5ffdb 0%, #96d1a3 100%);
+
+    /*TODO: can revisit background*/
+    /* background-color: #40a158;
 
     background-image: url("../assets/patterns/leaf.svg");
     background-repeat: repeat;
     background-position: top left;
-    background-size: 100px 50px; /* mod leaf backgroudn size here*/
+    background-size: 100px 50px;  */
     padding: 16px;
 }
 

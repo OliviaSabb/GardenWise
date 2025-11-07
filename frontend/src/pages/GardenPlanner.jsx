@@ -125,7 +125,11 @@ function GardenPlanner(){
     // Trying to verify the user is logged in to access garden planner page
     const userLoggedIn = localStorage.getItem("access_token");
     if(!userLoggedIn) {
-        return <p>You must be logged in to view this page!</p>
+        return (
+            <main className="gp-planner">
+                <p>You must be logged in to view this page!</p>
+            </main>
+        )
         // or can render some sort of info page here instead with register login buttons
     }
 

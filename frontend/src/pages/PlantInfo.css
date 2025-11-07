@@ -3,10 +3,10 @@
     grid-template-columns: auto auto;
     grid-template-rows: 20vh;
     justify-content: start;
-
-    margin: 30px -35px 0 -35px;
+    background: linear-gradient(160deg, #d5ffdb 0%, #96d1a3 100%);
+    margin: auto;
     width: 100vw;
-    height: 90vh;
+    height: 100vh;
     width: 100vw;
 }
 

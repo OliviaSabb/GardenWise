@@ -5,10 +5,9 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    background-color: #e9f7ea;
+    
 
-    background-repeat: repeat;
-    background-size: 120px 60px;
+    background: linear-gradient(160deg, #d5ffdb 0%, #96d1a3 100%);
     padding: 2rem 1rem;
 }
 
