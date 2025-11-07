@@ -4,21 +4,24 @@
     grid-template-rows: 20vh;
     justify-content: start;
     background: linear-gradient(160deg, #d5ffdb 0%, #96d1a3 100%);
-    margin: 30px -35px 0 -35px;
     width: 100vw;
     height: 90vh;
     width: 100vw;
 }
 
-.PlantInfo h1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.plantInfoTitle {
+    text-align: center;
     font-size: 3vw;
 
-    background-color: #F0E491;
     height: 20vh; 
     margin: 0;
+    color: var(--nav-green);
+}
+
+.plantLeftColumn {
+    margin-left: 2vw;
+    margin-top: 4vh;
+    padding: 0 0.5vw 0 0.5vw;
 }
 
 .PlantInfo ul {
@@ -32,14 +35,18 @@
 
 .PlantInfo button {
     margin: 0;
-    border-radius: 0;
-    background-color: #BBC863;
-    border-top: 1px solid black;
+    background: var(--nav-green);
     transition: background-color 0.4s ease;
+    border-radius: 5px; 
+    font-size: 3.5vh;
+    margin: 0.25vh;
+    color: #ffffff;
+    padding: 0.2vh 0 0.2vh 0;
 }
 
 .PlantInfo button:hover {
-    background-color: #949e4f;
+    background-color: #1d883f;
+    transform: translateY(-1px);
 }
 
 .PlantDesc {
@@ -47,11 +54,13 @@
     align-items: center;
     justify-content: center;
 
-    background-color: #5c7f50;
+    background: #fff;
     grid-column-start: 2;
     grid-row-start: 1;
-    width: 75vw;
-    height: 90vh;
+    width: 71vw;
+    height: 84vh;
+    border-radius: 10px; 
+    margin: 4vh 2vw;
 }
 
 .PlantDesc p {

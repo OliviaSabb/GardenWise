@@ -64,7 +64,10 @@ function PlantInfo(){
 
     return (
         <main className="PlantInfo">
-        <h1>Plant Information</h1>
+        
+        <div className = "plantLeftColumn">
+        <h1 className = "plantInfoTitle">Plant Information</h1>
+
         <ul>
           {plantData.map((item, index) => (
             <button key={index} onClick={() => handleButtonClick(item)}>
@@ -72,6 +75,8 @@ function PlantInfo(){
             </button>
           ))}
         </ul>
+        
+        </div>
 
         <div className="PlantDesc">
             <p>Please Click on a Plant!</p>
