@@ -150,60 +150,60 @@ function GardenPlanner(){
     const [dateWatered, setDateWatered] = useState("");
     const [timeWatered, setTimeWatered] = useState("");
 
-// helper: combine date and time to ISO format
-const toISOStringLocal = (dateStr, timeStr) => {
-  if (!dateStr) return null;
-  const [year, month, day] = dateStr.split("-");
-  const [hour = "00", minute = "00"] = timeStr ? timeStr.split(":") : [];
-  return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`).toISOString();
-};
-
-
-useEffect(() => {
-    const fetchGardenData = async () => {
-        const token = localStorage.getItem('access_token');
-
-        console.log("Fetching gardens with token:", localStorage.getItem("access_token"));
-
-        if (!token) {
-            setError("Please log in to access your garden.");
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
-
-            const responseData = await response.json(); // read once
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
-            }
-
-            setGardenData(responseData);
-
-            // build placement map
-            const placementMap = {};
-            responseData.forEach(garden => {
-                garden.garden_plants?.forEach(plant => {
-                    const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
-                    placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
-                });
-            });
-            setPlacement(placementMap);
-
-
-        } catch (err) {
-            console.error("Fetch error:", err);
-            setError(`Failed to fetch gardens: ${err.message}`);
-        }
-        finally {
-            setLoading(false); 
-        }
+    // helper: combine date and time to ISO format
+    const toISOStringLocal = (dateStr, timeStr) => {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split("-");
+    const [hour = "00", minute = "00"] = timeStr ? timeStr.split(":") : [];
+    return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`).toISOString();
     };
 
-    fetchGardenData();
-}, []);
+
+    useEffect(() => {
+        const fetchGardenData = async () => {
+            const token = localStorage.getItem('access_token');
+
+            console.log("Fetching gardens with token:", token);
+
+            if (!token) {
+                setError("Please log in to access your garden.");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
+
+                const responseData = await response.json(); // read once
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
+                }
+
+                setGardenData(responseData);
+
+                // build placement map
+                const placementMap = {};
+                responseData.forEach(garden => {
+                    garden.garden_plants?.forEach(plant => {
+                        const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
+                        placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
+                    });
+                });
+                setPlacement(placementMap);
+
+
+            } catch (err) {
+                console.error("Fetch error:", err);
+                setError(`Failed to fetch gardens: ${err.message}`);
+            }
+            finally {
+                setLoading(false); 
+            }
+        };
+
+        fetchGardenData();
+    }, []);
 
 
 
@@ -223,97 +223,97 @@ useEffect(() => {
 
 
 
-const handleCellClick = async (r, c) => {
-    const key = `${r}-${c}`;
+    const handleCellClick = async (r, c) => {
+        const key = `${r}-${c}`;
 
-    if (mode === "plant") {
-        if (!selectedPlantId) return;
+        if (mode === "plant") {
+            if (!selectedPlantId) return;
 
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-            setError("You must be logged in.");
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                setError("You must be logged in.");
+                return;
+            }
+
+            try {
+                // Decode token to get user ID
+                const decoded = jwt_decode(token);
+                const loggedInUserId = decoded?.user_id;
+
+                if (!gardenData || gardenData.length === 0) {
+                    setError("No garden available. Create a garden first.");
+                    return;
+                }
+
+                console.log("Garden data:", gardenData);
+                console.log("Logged in user ID:", loggedInUserId);
+
+                // Works with both numeric and object forms
+                const userGarden = gardenData.find(g => 
+                    Number(g.user) === Number(loggedInUserId) || 
+                    Number(g.user?.id) === Number(loggedInUserId)
+                );
+
+
+                if (!userGarden) {
+                    setError("No garden found for your account.");
+                    console.warn("No matching garden found for user:", loggedInUserId);
+                    return;
+                }
+
+                //Used emojis for testing so I could see erroe better
+                const gardenId = userGarden.id;
+                console.log("Found garden ID:", gardenId);
+                console.log("Matched garden:", userGarden);
+                // Use the numeric id for PlantType
+                const plantNumericId = PLANT_INFO[selectedPlantId]?.id_numeric;
+                if (!plantNumericId) {
+                    setError(`Missing numeric ID for ${selectedPlantId}`);
+                    console.error("Missing id_numeric for plant:", selectedPlantId);
+                    return;
+                }
+
+                console.log(`Planting ${selectedPlantId} (ID ${plantNumericId}) at ${key}`);
+
+                const response = await fetchWithAuth(
+                    `http://127.0.0.1:8000/api/gardens/${gardenId}/plants/`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            plant_type: plantNumericId,
+                            position: key,
+                            health: "Healthy",
+                            time_planted: toISOStringLocal(datePlanted, timePlanted) || new Date().toISOString(),
+                            time_watered: toISOStringLocal(dateWatered, timeWatered) || new Date().toISOString(),
+
+                        }),
+                    }
+                );
+
+                if (!response.ok) {
+                    const errData = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errData}`);
+                }
+
+                const savedPlant = await response.json();
+                console.log("Successfully saved plant to backend:", savedPlant);
+
+                // Update grid instantly
+                setPlacement(prev => ({ ...prev, [key]: selectedPlantId }));
+
+            } catch (error) {
+                console.error("Save failed:", error);
+                setError('Failed to save plant data: ' + error.message);
+            }
+
             return;
         }
 
-        try {
-            // Decode token to get user ID
-            const decoded = jwt_decode(token);
-            const loggedInUserId = decoded?.user_id;
-
-            if (!gardenData || gardenData.length === 0) {
-                setError("No garden available. Create a garden first.");
-                return;
-            }
-
-            console.log("Garden data:", gardenData);
-            console.log("Logged in user ID:", loggedInUserId);
-
-            // Works with both numeric and object forms
-           const userGarden = gardenData.find(g => 
-                Number(g.user) === Number(loggedInUserId) || 
-                Number(g.user?.id) === Number(loggedInUserId)
-            );
-
-
-            if (!userGarden) {
-                setError("No garden found for your account.");
-                console.warn("No matching garden found for user:", loggedInUserId);
-                return;
-            }
-
-            //Used emojis for testing so I could see erroe better
-            const gardenId = userGarden.id;
-            console.log("Found garden ID:", gardenId);
-            console.log("Matched garden:", userGarden);
-            // Use the numeric id for PlantType
-            const plantNumericId = PLANT_INFO[selectedPlantId]?.id_numeric;
-            if (!plantNumericId) {
-                setError(`Missing numeric ID for ${selectedPlantId}`);
-                console.error("Missing id_numeric for plant:", selectedPlantId);
-                return;
-            }
-
-            console.log(`Planting ${selectedPlantId} (ID ${plantNumericId}) at ${key}`);
-
-            const response = await fetchWithAuth(
-                `http://127.0.0.1:8000/api/gardens/${gardenId}/plants/`,
-                {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        plant_type: plantNumericId,
-                        position: key,
-                        health: "Healthy",
-                        time_planted: toISOStringLocal(datePlanted, timePlanted) || new Date().toISOString(),
-                        time_watered: toISOStringLocal(dateWatered, timeWatered) || new Date().toISOString(),
-
-                    }),
-                }
-            );
-
-            if (!response.ok) {
-                const errData = await response.text();
-                throw new Error(`HTTP ${response.status}: ${errData}`);
-            }
-
-            const savedPlant = await response.json();
-            console.log("Successfully saved plant to backend:", savedPlant);
-
-            // Update grid instantly
-            setPlacement(prev => ({ ...prev, [key]: selectedPlantId }));
-
-        } catch (error) {
-            console.error("Save failed:", error);
-            setError('Failed to save plant data: ' + error.message);
+        if (mode === "inspect") {
+            setSelectedCell(key);
+            return;
         }
-
-        return;
-    }
-
-    if (mode === "inspect") {
-        setSelectedCell(key);
-        return;
-    }
-};
+    };
 
     if (loading) {
         return <div>Loading garden data...</div>;
