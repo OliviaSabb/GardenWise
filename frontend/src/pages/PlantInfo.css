@@ -4,9 +4,9 @@
     grid-template-rows: 20vh;
     justify-content: start;
     background: linear-gradient(160deg, #d5ffdb 0%, #96d1a3 100%);
-    margin: auto;
+    margin: 30px -35px 0 -35px;
     width: 100vw;
-    height: 100vh;
+    height: 90vh;
     width: 100vw;
 }
 
