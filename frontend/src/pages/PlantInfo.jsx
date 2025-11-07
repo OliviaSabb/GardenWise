@@ -21,34 +21,33 @@ function PlantInfo(){
     };
 
    useEffect(() => {
-    
-       const fetchPlantData = async () => {
-           const token = localStorage.getItem('access_token');
-           if (!token) {
-               setError("Please log in to access your garden.");
-               return;
-           }
+        const fetchPlantData = async () => {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                setError("Please log in to access your garden.");
+                return;
+            }
 
-           try {
+            try {
                 const response = await fetchWithAuth("http://127.0.0.1:8000/api/planttype/plants");
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
                 }
 
-               const data = await response.json();
-               setPlantData(data);
+                const data = await response.json();
+                setPlantData(data);
 
 
-           } catch (err) {
-               setError("Failed to fetch plants. Please check your connection.");
-           } finally {
+            } catch (err) {
+                setError("Failed to fetch plants. Please check your connection.");
+            } finally {
             setLoading(false);
-          }
+            }
        };
    
        fetchPlantData();
-   }, []);
+    }, []);
 
     if (loading) {
         return <p>Loading data...</p>;
