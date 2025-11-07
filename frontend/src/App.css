@@ -1,74 +1,35 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* App-wide layout */
+.app-shell {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* header | main | footer */
 }
 
-main {
-  margin-top: 64px; 
+/* header */
+.app-header {
+  position: relative; /* keep neutral; Nav handles its own stickiness/shadow if needed */
+  z-index: 10;
 }
 
-body {
-  margin: 0;
+/* main content routes render */
+.app-main {
+  min-height: 0; /* prevent overflow issues in grid */
+  padding-top: 64px;
+  display: block;
 }
 
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  display: flex;
-  align-items: center;
-  background: #40a158;
-  height: 64px;
-  padding: 0;
-
-  justify-content: flex-start;
-  
+/* footer */
+.app-footer {
+  border-top: 1px solid #e6ece8;
+  background: #fff;
 }
-
-.nav-left {
-  display: flex;
-  height: 100%;
-}
-
-.nav-spacer {
-  flex: 1;
-}
-
-.nav-right {
-  display: flex;
-  height: 100%;
-}
-
-.btn {
+.app-footer__inner {
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  height: 100%;
-  width: 120px; 
-  text-decoration: none;
-  color: white;
-  background: #40a158;
-  border: none;
-  border-right: 1px solid #2e7a43;
-
-  font-weight: bold;
-  transition: background 0.2s;
-}
-
-.login-btn {
-  border-left: 1px solid #2e7a43;
-  
-}
-
-.btn:hover {
-  background: #378b4c;
-}
-
-a:hover {
-  color: white;
+  width: min(1100px, 92%);
+  margin-inline: auto;
+  color: var(--text);
+  font-size: 0.95rem;
 }

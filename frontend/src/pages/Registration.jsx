@@ -1,6 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
-
+import "./Registration.css";
 
 
 function Registration(){
@@ -49,50 +49,74 @@ function Registration(){
         }
     };
 
-
-
     return (
-        <div>
-            <h2>Create an Account</h2>
-            <form onSubmit={handleSubmit}>
-                <input 
-                    type="text" 
-                    placeholder="Username" 
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input 
-                    type="email" 
-                    placeholder="Email" 
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input 
-                    type="password" 
-                    placeholder="Password"                   
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <input 
-                    type="password" 
-                    placeholder="Confirm Password" 
-                    required
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                />
+        <div className="register-page">
+            <div className="register-card">
+                <h2 id="register-title" className="register-title">Create an Account</h2>
 
-                {error && <p>{error}</p>}
+                <form className="register-form" onSubmit={handleSubmit} noValidate>
+                    <div className="form-field">
+                        <input 
+                            id="reg-username"
+                            name="username"
+                            className="input input-username"
+                            type="text" 
+                            placeholder="Username" 
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
 
-                <button type="submit">Register</button>
-            </form>
-            <p>
-                Already have an account? <Link to="/login">Login here</Link>
-            </p>
+                    <div className="form-field">
+                        <input
+                            id="reg-email"
+                            name="email"
+                            className="input input-email"
+                            type="email" 
+                            placeholder="Email" 
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="form-field">
+                        <input
+                            id="reg-password"
+                            name="password"
+                            className="input input-email"
+                            type="password" 
+                            placeholder="Password"                   
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                   
+                   <div className="form-field">
+                        <input 
+                            id="reg-confirm"
+                            name="confirm"
+                            className="input input-password-confirm"
+                            type="password" 
+                            placeholder="Confirm Password" 
+                            required
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
+                        />
+                    </div>
+                   
+                    {error && (<p id="register-error" className="error-text" role="alert">{error}</p>)}
+
+                    <button className="btn btn-primary" type="submit">Register</button>
+                </form>
+                <p className="register-footer">
+                    Already have an account? <Link to="/login">Login here</Link>
+                </p>
+            </div>
         </div>
-    )
+    );
     
 }
 

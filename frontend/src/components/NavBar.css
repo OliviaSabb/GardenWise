@@ -1,0 +1,88 @@
+:root {
+    --nav-h: 64px;
+    --nav-green: #40a158;
+    --nav-green-dark: #378b4c;
+    --nav-sep: #2e7a43;
+ }
+
+.site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    
+    background: var(--nav-green);
+    height: var(--nav-h);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--nav-sep);
+}
+
+.site-nav-inner {
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.site-nav-left,
+.site-nav-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.site-nav-spacer { flex: 1; }
+
+.site-nav-link, .site-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height:100%;
+    width: 120px;
+
+    text-decoration: none;
+    color: #fff;
+    background: var(--nav-green);
+    font-weight: 600;
+
+    border: none;
+    border-right: 1px solid var(--nav-sep);
+
+    transition: background 0.2s ease;
+    
+}
+
+.site-nav-link:first-child, .site-nav-btn:first-child {
+    border-left: 1px solid var(--nav-sep);
+}
+
+/* .site-nav-btn.login {
+    background: #7CA982;
+    color: #0f1712;
+} */
+.site-nav-btn.login {
+    border-left: 1px solid var(--nav-sep);
+}
+
+
+.site-nav-link:hover, .site-nav-btn:hover {
+    background: var(--nav-green-dark);
+    color: #fff;
+}
+
+.site-nav-link:focus, .site-nav-btn:focus {
+    outline: 2px solid rgba(255,255,255,0.3);
+    outline-offset: -2px;
+}
+
+.site-nav-btn.logout {
+    background: #e7ece9;
+    color: #0f1712;
+}
+
