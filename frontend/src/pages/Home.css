@@ -1,0 +1,116 @@
+/* root */
+.home-container {
+    min-height: calc(100svh - var(--nav-h));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #e9f7ea;
+
+    background-repeat: repeat;
+    background-size: 120px 60px;
+    padding: 2rem 1rem;
+}
+
+/* home content */
+.home-content {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    max-width: 800px;
+}
+
+.home-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--nav-green);
+    margin-bottom: 0.75rem;
+}
+
+.home-slogan {
+    font-size: 1.25rem;
+    color: #2e7a43;
+    margin-bottom: 2rem;
+}
+
+/* buttons */
+.home-getting-started {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--nav-green);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--nav-green-dark);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background: var(--nav-green);
+    color: #fff;
+}
+
+.btn-outline:hover {
+    background: var(--nav-green-dark);
+    transform: translateY(-2px);
+}
+
+/* features section */
+.home-features {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+}
+
+.home-features-title {
+    font-size: 1.75rem;
+    color: var(--nav-green-dark);
+    margin-bottom: 1.5rem;
+}
+
+.home-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+/*  cards */
+.feature-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    text-align: left;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card-title {
+    color: var(--nav-green-dark);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card-text {
+    color: #444;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
