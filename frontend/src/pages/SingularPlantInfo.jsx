@@ -1,4 +1,4 @@
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams, useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 import { fetchWithAuth } from "../utils/fetchWithAuth";
 import "./PlantInfo.css"
@@ -7,9 +7,12 @@ function SingularPlantInfo(){
 
     const { id } = useParams()
 
-   const navigate = useNavigate();
+    const navigate = useNavigate();
+
+    const location = useLocation()
 
     const [plantData, setPlantData] = useState(null);
+    const [currentPlant, setCurrentPlant] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
@@ -42,6 +45,12 @@ function SingularPlantInfo(){
                const data = await response.json();
                setPlantData(data);
 
+                for (let i = 0; i < data.length; i++) {
+                if (data[i].id == id){
+                    setCurrentPlant(data[i]);
+                }
+        }
+                   
 
            } catch (err) {
                setError("Failed to fetch plants. Please check your connection.");
@@ -49,9 +58,28 @@ function SingularPlantInfo(){
             setLoading(false);
           }
        };
-   
        fetchPlantData();
    }, []);
+
+    useEffect(() => {
+    
+       const assignSinglePlant = async () => {
+
+        try {
+            for (let i = 0; i < plantData.length; i++) {
+            if (plantData[i].id == id){
+                setCurrentPlant(plantData[i]);
+                }
+            }
+
+          } catch (err) {
+               
+            }
+       
+       };
+   
+       assignSinglePlant();
+   }, [location, plantData]);
 
     if (loading) {
         return <p>Loading data...</p>;
@@ -61,19 +89,39 @@ function SingularPlantInfo(){
         return <div>Error: {error}</div>;
     }
 
+    console.log(currentPlant)
+
     return (
         <main className="PlantInfo">
-        <h1>Plant Information</h1>
-        <ul>
-          {plantData.map((item, index) => (
-            <button key={index} onClick={() => handleButtonClick(item)}>
-                {item.common_name}
-            </button>
-          ))}
-        </ul>
+        <div className = "plantLeftColumn">
+        <h1 className = "plantInfoTitle">Plant Information</h1>
+
+        <div className = "plantList">
+            <ul>
+            {plantData.map((item, index) => (
+                <button key={index} onClick={() => handleButtonClick(item)}>
+                    {item.common_name}
+                </button>
+            ))}
+            </ul>
+        </div>
+     
+        
+        </div>
+
 
         <div className="PlantDesc">
-            <p>{id}</p>
+            <div className = "plantText">
+            <h1>{currentPlant.common_name}</h1>
+            <h2>Scientific Name: {currentPlant.scientific_name}</h2>
+            <h2>Growth Rate: {currentPlant.growth_rate}</h2>
+            <h2>Growth Rate: {currentPlant.growth_rate}</h2>
+            <h2>Ph: {currentPlant.ph}</h2>
+            <h2>Temperture: {currentPlant.temperture}</h2>
+            <h2>Season: {currentPlant.season}</h2>
+            <h2>Zone: {currentPlant.zone}</h2>
+            <h2>Spacing: {currentPlant.spacing}</h2>
+            </div>
         </div>
 
         </main>
