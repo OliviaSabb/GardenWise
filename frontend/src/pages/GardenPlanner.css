@@ -1,4 +1,4 @@
-:root { --gap: 1rem; --panel-bg: #f8f8f8; --border: #e5e5e5; --nav-h: 64px; }
+:root { --gap: 1rem; --panel-bg: #f8f8f8; --border: #e5e5e5; --nav-h: 64px; --panel-bg: #eef8ef; --panel-border: #cde3ce; }
 
 main{
     color: black;
@@ -24,26 +24,33 @@ main{
     overflow: hidden;
 }
 
-
-
-
-
-
 .gp-panel-center {
     display: flex;
     flex-direction: column;
-    background-color: yellow;
+    background-color: green;
+}
+
+.gp-panel-left {
+    background: linear-gradient(to bottom right, #e9f5ea, #dceedd);
+    border-color: #c0dec1;
+    
+}
+
+.gp-panel-right {
+    background: linear-gradient(to bottom right, #e9f5ea, #dceedd);
+    border-color: #c0dec1;
+    padding: var(--gap);
 }
 
 .gp-grid-toolbar {
     display: flex;
-    background-color: red;
+    
 
     padding: .5rem .75rem;
 }
 
 .gp-tools {
-    background-color: blue;
+    
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -65,33 +72,44 @@ main{
     grid-template-columns: repeat(var(--cols), var(--cellSize)); /* TODO; decide size etc*/
     grid-template-rows: repeat(var(--rows), var(--cellSize));
     gap:4px;
-    background: #fff;
+    
     padding: 6px;
     border-radius: 8px;
     border: 1px dashed #cfcfcf;
     max-height: 90vh;
+
+    background-image: url("/dirt-icons/dirt.svg");
+    background-repeat: repeat;
+    background-position: 0 0;
+    background-size: 64px 64px;
 
     overflow: auto;
     overflow-y:scroll; 
 }
 
 .gp-cell {
-    border: 1px solid var(--border);
+    width: var(--cellSize);
+    height: var(--cellSize);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid #7b5a3e;
     border-radius: 4px;
+    background-color: transparent;
+    position: relative;
+}
+
+.gp-plant-icon {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    transition: transform 0.15s ease;
 }
 
 
-/* plant tabs */
-.gp-tablist > .gp-tab {
-    all: unset;           /* removes default/button/lib styles */
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-block;
-    padding: 8px 14px;
-    font: inherit;        /* match surrounding font */
-    color: #333;
-    border-bottom: 2px solid transparent;
-}
 .gp-tablist {
     display:flex;
     gap: 8px;
@@ -121,22 +139,53 @@ main{
 /* plant list and plants */
 
 .gp-plant-list {
-    padding: .75rem;
-    margin: 0;
-    list-style: none;
-    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 0.75rem;
 }
 
 .gp-plant-item {
-    background: #fff;
-    border: 1px solid var(--border);
+    list-style: none;
+    border: none;
     border-radius: 6px;
-    color: black;
+    background: transparent;
+    padding: 0;
 }
 
+.gp-plant-list-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
 
+.gp-plant-thumbnail {
+    width: 32px;
+    height: 32px;
+}
 
+.gp-plant-name {
+    font-size: 0.9rem;
+    line-height: 1.1;
+    text-align: center;
+    color: #111;
+}
 
+.gp-plant-item.selected .gp-plant-tile {
+    border-color: #4B3B2B;
+    box-shadow: 0 0 0 2px rgba(785, 59, 43, 0.12);
+}
+
+.gp-plant-list-tile:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 6px rgba(60, 171, 68, 0.3);
+}
 
 /* right panel plant info */
 .gp-details-header { margin-bottom: 12px; }

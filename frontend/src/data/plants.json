@@ -1,0 +1,532 @@
+{
+    "avocado": {
+        "id": "avocado",
+        "id_numeric": 1,
+        "name": "Avocado",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 180,
+        "water": "Moderate",
+        "notes": "Prefers warm climates; protect from frost."
+    },
+    "banana": {
+        "id": "banana",
+        "id_numeric": 2,
+        "name": "Banana",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 300,
+        "water": "High",
+        "notes": "Requires tropical warmth and rich, moist soil."
+    },
+    "basil": {
+        "id": "basil",
+        "id_numeric": 3,
+        "name": "Basil",
+        "plant_type": "Herb",
+        "sunlight": "Full Sun",
+        "spacing": 25,
+        "water": "Regular",
+        "notes": "Pinch flowers to encourage leaf growth."
+    },
+    "bell-pepper": {
+        "id": "bell-pepper",
+        "id_numeric": 4,
+        "name": "Bell Pepper",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 45,
+        "water": "Moderate",
+        "notes": "Thrives in warm soil; avoid overwatering."
+    },
+    "blueberry": {
+        "id": "blueberry",
+        "id_numeric": 5,
+        "name": "Blueberry",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 120,
+        "water": "High",
+        "notes": "Prefers acidic soil and consistent watering."
+    },
+    "broccoli": {
+        "id": "broccoli",
+        "id_numeric": 6,
+        "name": "Broccoli",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 45,
+        "water": "Moderate",
+        "notes": "Cool-season crop; harvest heads before flowering."
+    },
+    "brussels-sprouts": {
+        "id": "brussels-sprouts",
+        "id_numeric": 7,
+        "name": "Brussels Sprouts",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 60,
+        "water": "Moderate",
+        "notes": "Requires long growing season; plant early."
+    },
+    "cabbage": {
+        "id": "cabbage",
+        "id_numeric": 8,
+        "name": "Cabbage",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 45,
+        "water": "Moderate",
+        "notes": "Prefers cooler weather; keep soil consistently moist."
+    },
+    "carrot": {
+        "id": "carrot",
+        "id_numeric": 9,
+        "name": "Carrot",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 8,
+        "water": "Moderate",
+        "notes": "Loose, sandy soil encourages straight roots."
+    },
+    "cauliflower": {
+        "id": "cauliflower",
+        "id_numeric": 10,
+        "name": "Cauliflower",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 45,
+        "water": "Moderate",
+        "notes": "Blanch heads to keep them white; sensitive to heat."
+    },
+    "celery": {
+        "id": "celery",
+        "id_numeric": 11,
+        "name": "Celery",
+        "plant_type": "Vegetable",
+        "sunlight": "Partial Sun",
+        "spacing": 25,
+        "water": "High",
+        "notes": "Needs constant moisture; mulch to retain water."
+    },
+    "chamomile": {
+        "id": "chamomile",
+        "id_numeric": 12,
+        "name": "Chamomile",
+        "plant_type": "Herb",
+        "sunlight": "Full Sun",
+        "spacing": 20,
+        "water": "Low",
+        "notes": "Drought-tolerant herb used for calming teas."
+    },
+    "cherry": {
+        "id": "cherry",
+        "id_numeric": 13,
+        "name": "Cherry",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 400,
+        "water": "Moderate",
+        "notes": "Requires cold winters and well-drained soil."
+    },
+    "coconut": {
+        "id": "coconut",
+        "id_numeric": 14,
+        "name": "Coconut",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 600,
+        "water": "High",
+        "notes": "Thrives in sandy coastal soils; tropical climates only."
+    },
+    "corn": {
+        "id": "corn",
+        "id_numeric": 15,
+        "name": "Corn",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 30,
+        "water": "High",
+        "notes": "Plant in blocks for pollination; keep soil moist."
+    },
+    "cucumber": {
+        "id": "cucumber",
+        "id_numeric": 16,
+        "name": "Cucumber",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 30,
+        "water": "High",
+        "notes": "Needs rich, moist soil; train vines to climb."
+    },
+    "dragon-fruit": {
+        "id": "dragon-fruit",
+        "id_numeric": 17,
+        "name": "Dragon Fruit",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 200,
+        "water": "Moderate",
+        "notes": "A cactus fruit; support vines and avoid overwatering."
+    },
+    "eggplant": {
+        "id": "eggplant",
+        "id_numeric": 18,
+        "name": "Eggplant",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 45,
+        "water": "Moderate",
+        "notes": "Prefers warm soil; harvest when glossy."
+    },
+    "fig": {
+        "id": "fig",
+        "id_numeric": 19,
+        "name": "Fig",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 300,
+        "water": "Low",
+        "notes": "Drought-tolerant; prune for shape."
+    },
+    "garlic": {
+        "id": "garlic",
+        "id_numeric": 20,
+        "name": "Garlic",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 10,
+        "water": "Low",
+        "notes": "Plant cloves in fall; harvest when leaves brown."
+    },
+    "ginger": {
+        "id": "ginger",
+        "id_numeric": 21,
+        "name": "Ginger",
+        "plant_type": "Vegetable",
+        "sunlight": "Partial Sun",
+        "spacing": 25,
+        "water": "High",
+        "notes": "Prefers humid climates; harvest after 8–10 months."
+    },
+    "grape": {
+        "id": "grape",
+        "id_numeric": 22,
+        "name": "Grape",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 200,
+        "water": "Moderate",
+        "notes": "Train vines on trellises; prune annually."
+    },
+    "grapefruit": {
+        "id": "grapefruit",
+        "id_numeric": 23,
+        "name": "Grapefruit",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 450,
+        "water": "Moderate",
+        "notes": "Citrus tree; needs protection from frost."
+    },
+    "guava": {
+        "id": "guava",
+        "id_numeric": 24,
+        "name": "Guava",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 250,
+        "water": "Moderate",
+        "notes": "Tolerant of pruning; harvest when soft."
+    },
+    "kiwi": {
+        "id": "kiwi",
+        "id_numeric": 25,
+        "name": "Kiwi",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 300,
+        "water": "High",
+        "notes": "Requires both male and female plants for fruit."
+    },
+    "leek": {
+        "id": "leek",
+        "id_numeric": 26,
+        "name": "Leek",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 15,
+        "water": "High",
+        "notes": "Mound soil to blanch stems; harvest in fall."
+    },
+    "lemon": {
+        "id": "lemon",
+        "id_numeric": 27,
+        "name": "Lemon",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 400,
+        "water": "Moderate",
+        "notes": "Citrus tree; water deeply but infrequently."
+    },
+    "lettuce": {
+        "id": "lettuce",
+        "id_numeric": 28,
+        "name": "Lettuce",
+        "plant_type": "Vegetable",
+        "sunlight": "Partial Sun",
+        "spacing": 20,
+        "water": "High",
+        "notes": "Cool-season crop; plant successive rows."
+    },
+    "lime": {
+        "id": "lime",
+        "id_numeric": 29,
+        "name": "Lime",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 400,
+        "water": "Moderate",
+        "notes": "Fertilize regularly during growing season."
+    },
+    "mango": {
+        "id": "mango",
+        "id_numeric": 30,
+        "name": "Mango",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 500,
+        "water": "Moderate",
+        "notes": "Tropical tree; prune lightly for airflow."
+    },
+    "mint": {
+        "id": "mint",
+        "id_numeric": 31,
+        "name": "Mint",
+        "plant_type": "Herb",
+        "sunlight": "Partial Sun",
+        "spacing": 25,
+        "water": "High",
+        "notes": "Spreads aggressively; grow in containers."
+    },
+    "mushrooms": {
+        "id": "mushrooms",
+        "id_numeric": 32,
+        "name": "Mushrooms",
+        "plant_type": "Fungus",
+        "sunlight": "Shade",
+        "spacing": 5,
+        "water": "High",
+        "notes": "Grow in moist, dark areas; avoid direct sunlight."
+    },
+    "onion": {
+        "id": "onion",
+        "id_numeric": 33,
+        "name": "Onion",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 10,
+        "water": "Moderate",
+        "notes": "Plant sets shallow; harvest when tops fall."
+    },
+    "orange": {
+        "id": "orange",
+        "id_numeric": 34,
+        "name": "Orange",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 400,
+        "water": "Moderate",
+        "notes": "Citrus tree; protect from freezing temps."
+    },
+    "oregano": {
+        "id": "oregano",
+        "id_numeric": 35,
+        "name": "Oregano",
+        "plant_type": "Herb",
+        "sunlight": "Full Sun",
+        "spacing": 20,
+        "water": "Low",
+        "notes": "Drought-tolerant; harvest before flowering."
+    },
+    "papaya": {
+        "id": "papaya",
+        "id_numeric": 36,
+        "name": "Papaya",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 300,
+        "water": "High",
+        "notes": "Fast-growing tropical fruit; sensitive to cold."
+    },
+    "parsley": {
+        "id": "parsley",
+        "id_numeric": 37,
+        "name": "Parsley",
+        "plant_type": "Herb",
+        "sunlight": "Partial Sun",
+        "spacing": 20,
+        "water": "Moderate",
+        "notes": "Biennial herb; rich soil improves flavor."
+    },
+    "passion-fruit": {
+        "id": "passion-fruit",
+        "id_numeric": 38,
+        "name": "Passion Fruit",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 200,
+        "water": "High",
+        "notes": "Vining plant; needs trellis support."
+    },
+    "pear": {
+        "id": "pear",
+        "id_numeric": 39,
+        "name": "Pear",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 500,
+        "water": "Moderate",
+        "notes": "Requires chill hours; prune to open canopy."
+    },
+    "peas": {
+        "id": "peas",
+        "id_numeric": 40,
+        "name": "Peas",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 10,
+        "water": "Moderate",
+        "notes": "Cool-season crop; support climbing varieties."
+    },
+    "pepper": {
+        "id": "pepper",
+        "id_numeric": 41,
+        "name": "Pepper",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 40,
+        "water": "Moderate",
+        "notes": "Keep soil warm and evenly moist."
+    },
+    "pineapple": {
+        "id": "pineapple",
+        "id_numeric": 42,
+        "name": "Pineapple",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 100,
+        "water": "Moderate",
+        "notes": "Grows from crowns; thrives in tropical weather."
+    },
+    "pomegranate": {
+        "id": "pomegranate",
+        "id_numeric": 43,
+        "name": "Pomegranate",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 300,
+        "water": "Low",
+        "notes": "Drought-tolerant shrub; prune lightly after harvest."
+    },
+    "pumpkin": {
+        "id": "pumpkin",
+        "id_numeric": 44,
+        "name": "Pumpkin",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 150,
+        "water": "Moderate",
+        "notes": "Needs large space; harvest when rind hardens."
+    },
+    "rosemary": {
+        "id": "rosemary",
+        "id_numeric": 45,
+        "name": "Rosemary",
+        "plant_type": "Herb",
+        "sunlight": "Full Sun",
+        "spacing": 30,
+        "water": "Low",
+        "notes": "Evergreen herb; drought-tolerant and aromatic."
+    },
+    "saffron": {
+        "id": "saffron",
+        "id_numeric": 46,
+        "name": "Saffron",
+        "plant_type": "Herb",
+        "sunlight": "Full Sun",
+        "spacing": 10,
+        "water": "Low",
+        "notes": "Grown for red stigmas; blooms in autumn."
+    },
+    "spring-onion": {
+        "id": "spring-onion",
+        "id_numeric": 47,
+        "name": "Spring Onion",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 10,
+        "water": "Moderate",
+        "notes": "Harvest young for mild flavor."
+    },
+    "squash": {
+        "id": "squash",
+        "id_numeric": 48,
+        "name": "Squash",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 100,
+        "water": "High",
+        "notes": "Requires warm soil; pollinate by hand if needed."
+    },
+    "starfruit": {
+        "id": "starfruit",
+        "id_numeric": 49,
+        "name": "Starfruit",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 250,
+        "water": "Moderate",
+        "notes": "Tropical tree; prune to maintain shape."
+    },
+    "strawberry": {
+        "id": "strawberry",
+        "id_numeric": 50,
+        "name": "Strawberry",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 20,
+        "water": "High",
+        "notes": "Mulch to retain moisture and protect fruit."
+    },
+    "sweet-potato": {
+        "id": "sweet-potato",
+        "id_numeric": 51,
+        "name": "Sweet Potato",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 30,
+        "water": "Moderate",
+        "notes": "Grow from slips; harvest before frost."
+    },
+    "tomato": {
+        "id": "tomato",
+        "id_numeric": 52,
+        "name": "Tomato",
+        "plant_type": "Vegetable",
+        "sunlight": "Full Sun",
+        "spacing": 45,
+        "water": "Moderate",
+        "notes": "Stake or cage plants; prune suckers for airflow."
+    },
+    "watermelon": {
+        "id": "watermelon",
+        "id_numeric": 53,
+        "name": "Watermelon",
+        "plant_type": "Fruit",
+        "sunlight": "Full Sun",
+        "spacing": 200,
+        "water": "High",
+        "notes": "Long vines; harvest when tendril near stem browns."
+    }
+}

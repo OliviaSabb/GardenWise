@@ -5,133 +5,25 @@ import GardenPlannerGridFlexbox from "../components/GardenPlannerGridFlexbox.jsx
 import GridInfoPanel from "../components/GridInfoPanel.jsx"
 import { fetchWithAuth } from "../utils/fetchWithAuth";
 import jwt_decode from "jwt-decode"; // This should work with latest versions
+import PLANT_INFO from "../data/plants.json";
+import MOCK_GARDEN from "../data/plants.json";
+import PLANT_CATEGORIES from "../data/plants_categories.json";
 
-
-
-
-const PLANT_CATEGORIES = {
-    Vegetables: ["tomato", "cucumber", "pumpkin", "carrot", "lettuce"],
-    Herbs: ["rosemary", "mint", "basil"],
-    Fruits: ["blackberry", "strawberry",]
-};
-
-const PLANT_INFO = {
-    tomato: {
-        id: "tomato",
-        id_numeric: 1,
-        name: "Tomato",
-        plant_type: "Vegetable",
-        sunlight: "Full Sun",
-        spacing: 18,
-        water: "Moderate",
-        notes: "Thrives in warm temperatures; stake or cage to support growth."
-    },
-    cucumber: {
-        id: "cucumber",
-        id_numeric: 2,
-        name: "Cucumber",
-        plant_type: "Vegetable",
-        sunlight: "Full Sun",
-        spacing: 12,
-        water: "High",
-        notes: "Prefers rich, moist soil and consistent watering for crisp fruit."
-    },
-    pumpkin: {
-        id: "pumpkin",
-        id_numeric: 3,
-        name: "Pumpkin",
-        plant_type: "Vegetable",
-        sunlight: "Full Sun",
-        spacing: 36,
-        water: "Moderate",
-        notes: "Requires plenty of space; plant in mounds for better drainage."
-    },
-    carrot: {
-        id: "carrot",
-        id_numeric: 4,
-        name: "Carrot",
-        plant_type: "Vegetable",
-        sunlight: "Full Sun",
-        spacing: 3,
-        water: "Moderate",
-        notes: "Loose, sandy soil promotes straight roots; keep evenly moist."
-    },
-    lettuce: {
-        id: "lettuce",
-        id_numeric: 5,
-        name: "Lettuce",
-        plant_type: "Vegetable",
-        sunlight: "Partial Sun",
-        spacing: 8,
-        water: "High",
-        notes: "Prefers cool weather; plant successive rows for continuous harvest."
-    },
-
-    rosemary: {
-        id: "rosemary",
-        id_numeric: 6,
-        name: "Rosemary",
-        plant_type: "Herb",
-        sunlight: "Full Sun",
-        spacing: 12,
-        water: "Low",
-        notes: "Tolerates dry soil; aromatic leaves used for cooking and decoration."
-    },
-    mint: {
-        id: "mint",
-        id_numeric: 7,
-        name: "Mint",
-        plant_type: "Herb",
-        sunlight: "Partial Sun",
-        spacing: 12,
-        water: "High",
-        notes: "Spreads quickly; grow in containers to prevent invasion."
-    },
-    basil: {
-        id: "basil",
-        id_numeric: 8,
-        name: "Basil",
-        plant_type: "Herb",
-        sunlight: "Full Sun",
-        spacing: 10,
-        water: "Regular",
-        notes: "Pinch off flowers to encourage leafy growth; companion to tomatoes."
-    },
-
-    blackberry: {
-        id: "blackberry",
-        id_numeric: 9,
-        name: "Blackberry",
-        plant_type: "Fruit",
-        sunlight: "Full Sun",
-        spacing: 36,
-        water: "Moderate",
-        notes: "Prefers trellis or support; prune canes after fruiting."
-    },
-    strawberry: {
-        id: "strawberry",
-        id_numeric: 10,
-        name: "Strawberry",
-        plant_type: "Fruit",
-        sunlight: "Full Sun",
-        spacing: 8,
-        water: "High",
-        notes: "Mulch to retain moisture and protect fruit from soil contact."
-    }
-};
 
 function GardenPlanner(){
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     // Trying to verify the user is logged in to access garden planner page
-    const userLoggedIn = localStorage.getItem("access_token");
-    if(!userLoggedIn) {
-        return (
-            <main className="gp-planner">
-                <p>You must be logged in to view this page!</p>
-            </main>
-        )
-        // or can render some sort of info page here instead with register login buttons
-    }
+    // const userLoggedIn = localStorage.getItem("access_token");
+    // if(!userLoggedIn) {
+    //     return (
+    //         <main className="gp-planner">
+    //             <p>You must be logged in to view this page!</p>
+    //         </main>
+    //     )
+    //     // or can render some sort of info page here instead with register login buttons
+    // }
+
+    
 
     // hooks
     // modes for planting or inspecting plants
@@ -140,7 +32,13 @@ function GardenPlanner(){
     const [selectedPlantId, setSelectedPlantId] = useState(null);
     const [placement, setPlacement] = useState({});
      // plant list choice, start with veggies
-    const [category, setCategory] = useState("Vegetables");
+    const [category, setCategory] = useState("Vegetable");
+
+    const getPlantImage = (id) => {
+        if (!id) return null;
+        return `/plant-icons-test/${id}.svg`;
+    };
+
     // handles how many rows/columns and cell size
     const [rows, setRows] = useState(8);
     const [cols, setCols] = useState(8);
@@ -163,153 +61,75 @@ function GardenPlanner(){
     };
 
 
-    useEffect(() => {
-        const fetchGardenData = async () => {
-            const token = localStorage.getItem('access_token');
+    // useEffect(() => {
+    //     const fetchGardenData = async () => {
+    //         const token = localStorage.getItem('access_token');
 
-            console.log("Fetching gardens with token:", token);
+    //         console.log("Fetching gardens with token:", token);
 
-            if (!token) {
-                setError("Please log in to access your garden.");
-                setLoading(false);
-                return;
-            }
+    //         if (!token) {
+    //             setError("Please log in to access your garden.");
+    //             setLoading(false);
+    //             return;
+    //         }
 
-            try {
-                const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
+    //         try {
+    //             const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
 
-                const responseData = await response.json(); // read once
+    //             const responseData = await response.json(); // read once
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
-                }
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
+    //             }
 
-                setGardenData(responseData);
+    //             setGardenData(responseData);
 
-                // build placement map
-                const placementMap = {};
-                responseData.forEach(garden => {
-                    garden.garden_plants?.forEach(plant => {
-                        const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
-                        placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
-                    });
-                });
-                setPlacement(placementMap);
-
-
-            } catch (err) {
-                console.error("Fetch error:", err);
-                setError(`Failed to fetch gardens: ${err.message}`);
-            }
-            finally {
-                setLoading(false); 
-            }
-        };
-
-        fetchGardenData();
-    }, []);
+    //             // build placement map
+    //             const placementMap = {};
+    //             responseData.forEach(garden => {
+    //                 garden.garden_plants?.forEach(plant => {
+    //                     const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
+    //                     placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
+    //                 });
+    //             });
+    //             setPlacement(placementMap);
 
 
+    //         } catch (err) {
+    //             console.error("Fetch error:", err);
+    //             setError(`Failed to fetch gardens: ${err.message}`);
+    //         }
+    //         finally {
+    //             setLoading(false); 
+    //         }
+    //     };
 
-    useEffect(() => {
-        if (!gardenData) {
-            setPlacement({});
-        }
-    }, [gardenData]);
+    //     fetchGardenData();
+    // }, []);
+
+
+
+    // useEffect(() => {
+    //     if (!gardenData) {
+    //         setPlacement({});
+    //     }
+    // }, [gardenData]);
 
     // vars
     const inspectedPlantId = selectedCell ? placement[selectedCell] : null;
     const plantInfo = inspectedPlantId ? PLANT_INFO[inspectedPlantId] : null;
     const isInspectMode = mode === "inspect";
-    const isEmptyCell = isInspectMode && (!selectedCell || !inspectedPlantId); 
+    //const isEmptyCell = isInspectMode && (!selectedCell || !inspectedPlantId); 
 
     // if we have a plant, plant it
-
-
 
     const handleCellClick = async (r, c) => {
         const key = `${r}-${c}`;
 
-        if (mode === "plant") {
+
+        if (mode === "plant" && selectedPlantId) {
             if (!selectedPlantId) return;
-
-            const token = localStorage.getItem('access_token');
-            if (!token) {
-                setError("You must be logged in.");
-                return;
-            }
-
-            try {
-                // Decode token to get user ID
-                const decoded = jwt_decode(token);
-                const loggedInUserId = decoded?.user_id;
-
-                if (!gardenData || gardenData.length === 0) {
-                    setError("No garden available. Create a garden first.");
-                    return;
-                }
-
-                console.log("Garden data:", gardenData);
-                console.log("Logged in user ID:", loggedInUserId);
-
-                // Works with both numeric and object forms
-                const userGarden = gardenData.find(g => 
-                    Number(g.user) === Number(loggedInUserId) || 
-                    Number(g.user?.id) === Number(loggedInUserId)
-                );
-
-
-                if (!userGarden) {
-                    setError("No garden found for your account.");
-                    console.warn("No matching garden found for user:", loggedInUserId);
-                    return;
-                }
-
-                //Used emojis for testing so I could see erroe better
-                const gardenId = userGarden.id;
-                console.log("Found garden ID:", gardenId);
-                console.log("Matched garden:", userGarden);
-                // Use the numeric id for PlantType
-                const plantNumericId = PLANT_INFO[selectedPlantId]?.id_numeric;
-                if (!plantNumericId) {
-                    setError(`Missing numeric ID for ${selectedPlantId}`);
-                    console.error("Missing id_numeric for plant:", selectedPlantId);
-                    return;
-                }
-
-                console.log(`Planting ${selectedPlantId} (ID ${plantNumericId}) at ${key}`);
-
-                const response = await fetchWithAuth(
-                    `http://127.0.0.1:8000/api/gardens/${gardenId}/plants/`,
-                    {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            plant_type: plantNumericId,
-                            position: key,
-                            health: "Healthy",
-                            time_planted: toISOStringLocal(datePlanted, timePlanted) || new Date().toISOString(),
-                            time_watered: toISOStringLocal(dateWatered, timeWatered) || new Date().toISOString(),
-
-                        }),
-                    }
-                );
-
-                if (!response.ok) {
-                    const errData = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errData}`);
-                }
-
-                const savedPlant = await response.json();
-                console.log("Successfully saved plant to backend:", savedPlant);
-
-                // Update grid instantly
-                setPlacement(prev => ({ ...prev, [key]: selectedPlantId }));
-
-            } catch (error) {
-                console.error("Save failed:", error);
-                setError('Failed to save plant data: ' + error.message);
-            }
-
+            setPlacement(prev => ({ ...prev, [key]: selectedPlantId}));
             return;
         }
 
@@ -319,13 +139,109 @@ function GardenPlanner(){
         }
     };
 
-    if (loading) {
-        return <div>Loading garden data...</div>;
-    }
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+    //TODO: fix commented out code. Testing functionality and visuals. Removed features like checking db, saving and 
+    // verifying user login for now.
+
+    // const handleCellClick = async (r, c) => {
+    //     const key = `${r}-${c}`;
+
+    //     if (mode === "plant") {
+    //         if (!selectedPlantId) return;
+
+    //         const token = localStorage.getItem('access_token');
+    //         if (!token) {
+    //             setError("You must be logged in.");
+    //             return;
+    //         }
+
+    //         try {
+    //             // Decode token to get user ID
+    //             const decoded = jwt_decode(token);
+    //             const loggedInUserId = decoded?.user_id;
+
+    //             if (!gardenData || gardenData.length === 0) {
+    //                 setError("No garden available. Create a garden first.");
+    //                 return;
+    //             }
+
+    //             console.log("Garden data:", gardenData);
+    //             console.log("Logged in user ID:", loggedInUserId);
+
+    //             // Works with both numeric and object forms
+    //             const userGarden = gardenData.find(g => 
+    //                 Number(g.user) === Number(loggedInUserId) || 
+    //                 Number(g.user?.id) === Number(loggedInUserId)
+    //             );
+
+
+    //             if (!userGarden) {
+    //                 setError("No garden found for your account.");
+    //                 console.warn("No matching garden found for user:", loggedInUserId);
+    //                 return;
+    //             }
+
+    //             //Used emojis for testing so I could see erroe better
+    //             const gardenId = userGarden.id;
+    //             console.log("Found garden ID:", gardenId);
+    //             console.log("Matched garden:", userGarden);
+    //             // Use the numeric id for PlantType
+    //             const plantNumericId = PLANT_INFO[selectedPlantId]?.id_numeric;
+    //             if (!plantNumericId) {
+    //                 setError(`Missing numeric ID for ${selectedPlantId}`);
+    //                 console.error("Missing id_numeric for plant:", selectedPlantId);
+    //                 return;
+    //             }
+
+    //             console.log(`Planting ${selectedPlantId} (ID ${plantNumericId}) at ${key}`);
+
+    //             const response = await fetchWithAuth(
+    //                 `http://127.0.0.1:8000/api/gardens/${gardenId}/plants/`,
+    //                 {
+    //                     method: 'POST',
+    //                     body: JSON.stringify({
+    //                         plant_type: plantNumericId,
+    //                         position: key,
+    //                         health: "Healthy",
+    //                         time_planted: toISOStringLocal(datePlanted, timePlanted) || new Date().toISOString(),
+    //                         time_watered: toISOStringLocal(dateWatered, timeWatered) || new Date().toISOString(),
+
+    //                     }),
+    //                 }
+    //             );
+
+    //             if (!response.ok) {
+    //                 const errData = await response.text();
+    //                 throw new Error(`HTTP ${response.status}: ${errData}`);
+    //             }
+
+    //             const savedPlant = await response.json();
+    //             console.log("Successfully saved plant to backend:", savedPlant);
+
+    //             // Update grid instantly
+    //             setPlacement(prev => ({ ...prev, [key]: selectedPlantId }));
+
+    //         } catch (error) {
+    //             console.error("Save failed:", error);
+    //             setError('Failed to save plant data: ' + error.message);
+    //         }
+
+    //         return;
+    //     }
+
+    //     if (mode === "inspect") {
+    //         setSelectedCell(key);
+    //         return;
+    //     }
+    // };
+
+    // if (loading) {
+    //     return <div>Loading garden data...</div>;
+    // }
+
+    // if (error) {
+    //     return <div>Error: {error}</div>;
+    // }
     return (
         <main className="gp-planner">
             <div className="gp-layout">
@@ -347,18 +263,31 @@ function GardenPlanner(){
 
                     {/* tab lists */}
                     <ul className="gp-plant-list" role="tabpanel">
-                        {PLANT_CATEGORIES[category].map((plantId) => {
-                            const info = PLANT_INFO[plantId]; // grab plant data
+                        {(PLANT_CATEGORIES[category] || []).map((plantId) => {
+                            const info = PLANT_INFO[plantId];
+                            if (!info) return null;
+                            const plantSvg = getPlantImage(plantId);
                             return (
                                 <li
                                     key={plantId}
-                                    className="gp-plant-item"
+                                    className={`gp-plant-item ${selectedPlantId === plantId ? "selected" : ""}`}
                                     onClick={() => {
-                                        console.log("Selected ", plantId);
+                                        console.log("Selected: ", plantId);
                                         setSelectedPlantId(plantId);
                                     }}
                                 >
-                                    {info.name}
+                                    <div className="gp-plant-list-tile">
+                                        <img
+                                            src={plantSvg}
+                                            className="gp-plant-thumbnail"
+                                            loading="lazy"
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = null; //potential filler if an image fails to load
+                                            }}
+                                        />
+                                        <div className="gp-plant-name">{info.name}</div>
+                                    </div>
                                 </li>
                             );
                         })}
@@ -420,6 +349,7 @@ function GardenPlanner(){
                         placement={placement}
                         onCellClick={handleCellClick}
                         getPlantName={(id) => PLANT_INFO[id]?.name ?? id}
+                        getPlantImage={getPlantImage}
                     />
                 </div>
                 

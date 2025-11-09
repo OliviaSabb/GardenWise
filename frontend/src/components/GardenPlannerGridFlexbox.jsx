@@ -1,7 +1,7 @@
 import React, {useMemo, useRef, useState} from "react";
 
 
-function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, getPlantName}) {
+function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, getPlantName, getPlantImage}) {
 
     const cells = useMemo(() => {
         return Array.from({ length: rows * cols }, (_, i) => {
@@ -10,6 +10,8 @@ function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, get
         return { r, c, key: `${r}-${c}` };
         });
     }, [rows, cols]);
+
+    
 
     return(
         <div>
@@ -28,6 +30,7 @@ function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, get
                     {cells.map(({r, c, key}) => {
                         const id = placement[key];
                         const label = id ? getPlantName?.(id) : "";
+                        const imgSrc = id ? getPlantImage(id) : null;
                         return (
                             <div 
                                 key={key} 
@@ -36,7 +39,14 @@ function GardenPlannerGridFlexbox({rows, cols, cell, placement, onCellClick, get
                                 data-col={c}
                                 onClick={() => onCellClick(r, c)}
                             >
-                                {label}
+                                {imgSrc && (
+                                    <img 
+                                        src={imgSrc}
+                                        className="gp-plant-icon"
+                                        draggable="false"
+                                    />
+                                )}
+                                {/* {label} */}
                             </div>
                         );
                     })}

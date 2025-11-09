@@ -1,0 +1,9 @@
+{
+  "rows": 8,
+  "cols": 8,
+  "placement": {
+    "0-0": "tomato",
+    "0-1": "basil",
+    "3-4": "carrot"
+  }
+}

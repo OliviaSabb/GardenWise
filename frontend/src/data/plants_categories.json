@@ -1,0 +1,63 @@
+{
+    "Vegetable": [
+        "bell-pepper",
+        "broccoli",
+        "brussels-sprouts",
+        "cabbage",
+        "carrot",
+        "cauliflower",
+        "celery",
+        "corn",
+        "cucumber",
+        "eggplant",
+        "garlic",
+        "ginger",
+        "leek",
+        "lettuce",
+        "onion",
+        "peas",
+        "pepper",
+        "pumpkin",
+        "spring-onion",
+        "squash",
+        "sweet-potato",
+        "tomato"
+    ],
+    "Fruit": [
+        "avocado",
+        "banana",
+        "blueberry",
+        "cherry",
+        "coconut",
+        "dragon-fruit",
+        "fig",
+        "grape",
+        "grapefruit",
+        "guava",
+        "kiwi",
+        "lemon",
+        "lime",
+        "mango",
+        "orange",
+        "papaya",
+        "passion-fruit",
+        "pear",
+        "pineapple",
+        "pomegranate",
+        "starfruit",
+        "strawberry",
+        "watermelon"
+    ],
+    "Herb": [
+        "basil",
+        "chamomile",
+        "mint",
+        "oregano",
+        "parsley",
+        "rosemary",
+        "saffron"
+    ],
+    "Fungus": [
+        "mushrooms"
+    ]
+}
