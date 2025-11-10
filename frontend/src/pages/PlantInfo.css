@@ -25,6 +25,7 @@
     width: 25vw;
     height: 80vh;
     background-color: #d4ffb2;
+    border: 1px solid #2e7a43;
     border-radius: 10px;
     padding-bottom: 2vh;
 }
@@ -61,7 +62,7 @@
 .PlantDesc {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
     justify-content: center;
 
     background: #ffffff;
@@ -76,4 +77,41 @@
 
 .PlantDesc p {
     font-size: 3.5vw;
+    text-align: center;
+    color: grey;
+}
+
+.plantText {
+
+    height: 80vh;
+    padding-left: 2vw;
+
+    /* display: flex;
+    flex-direction: column;
+    justify-content: flex-start; */
+}
+
+.plantText h1 {
+    font-size: 6.5vh;
+    text-decoration: underline;
+    color: var(--nav-green);
+
+
+}
+
+.plantStats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr; 
+    padding-right: 2vw;
+}
+
+.plantText h2 {
+    font-size: 3vh;
+    margin-top: 1vh;
+    border-bottom: 1px solid grey;;
+}
+
+.plantStatsTitle {
+    color: grey;
 }

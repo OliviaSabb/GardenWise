@@ -112,15 +112,30 @@ function SingularPlantInfo(){
 
         <div className="PlantDesc">
             <div className = "plantText">
-            <h1>{currentPlant.common_name}</h1>
-            <h2>Scientific Name: {currentPlant.scientific_name}</h2>
-            <h2>Growth Rate: {currentPlant.growth_rate}</h2>
-            <h2>Growth Rate: {currentPlant.growth_rate}</h2>
-            <h2>Ph: {currentPlant.ph}</h2>
-            <h2>Temperture: {currentPlant.temperture}</h2>
-            <h2>Season: {currentPlant.season}</h2>
-            <h2>Zone: {currentPlant.zone}</h2>
-            <h2>Spacing: {currentPlant.spacing}</h2>
+                <h1>{currentPlant.common_name}</h1>
+
+                <div className = "plantStats">
+                    <h2 className = "plantStatsTitle">Scientific Name:</h2> 
+                    <h2>{currentPlant.scientific_name}</h2>
+
+                    <h2 className = "plantStatsTitle">Growth Rate:</h2>
+                    <h2>{currentPlant.growth_rate}</h2>
+
+                    <h2 className = "plantStatsTitle">Ph:</h2>
+                    <h2>{currentPlant.ph}</h2>
+
+                    <h2 className = "plantStatsTitle">Temperture:</h2>
+                    <h2>{currentPlant.temperture}</h2>
+
+                    <h2 className = "plantStatsTitle">Season:</h2>
+                    <h2>{currentPlant.season}</h2>
+
+                    <h2 className = "plantStatsTitle">Zone:</h2>
+                    <h2>{currentPlant.zone}</h2>
+
+                    <h2 className = "plantStatsTitle">Spacing:</h2>
+                    <h2> {currentPlant.spacing}</h2>
+                </div>
             </div>
         </div>
 
