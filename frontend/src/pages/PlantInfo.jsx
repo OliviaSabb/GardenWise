@@ -24,7 +24,7 @@ function PlantInfo(){
     const handleButtonClick = (item) => {
         navigate(`/plant-info/${item.id}`);
     };
-
+    // Grabbing plant data fron DB
    useEffect(() => {
         const fetchPlantData = async () => {
             const token = localStorage.getItem('access_token');
