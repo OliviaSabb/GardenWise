@@ -80,5 +80,5 @@ class GardenPlant(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 
-def __str__(self):
-    return f"{self.type.common_name} in {self.garden.name} at {self.position}"
+    def __str__(self):
+        return f"{self.plant_type.common_name} in {self.garden.name} at {self.position}"
