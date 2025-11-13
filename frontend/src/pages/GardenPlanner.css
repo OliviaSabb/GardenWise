@@ -60,6 +60,26 @@ main{
     
 }
 
+.gp-garden-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.gp-save-garden, .gp-load-garden {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gp-save-garden input, .gp-load-garden select {
+    padding: 0.25rem 0.5rem;
+}
+
+
+
+
 .gp-grid-container {
     position: relative;
     flex: 1;

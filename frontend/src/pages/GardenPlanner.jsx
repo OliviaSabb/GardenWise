@@ -26,6 +26,12 @@ function GardenPlanner(){
     
 
     // hooks
+    
+    // garden save and load
+    const [gardenName, setGardenName] = useState("");
+    const [gardens, setGardens] = useState([]);
+    const [selectedGarden, setSelectedGarden] = useState("");
+
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
     const [selectedCell, setSelectedCell] = useState(null);
@@ -297,71 +303,116 @@ function GardenPlanner(){
 
                 {/* Middle panel: Garden grid planner*/}
                 <div className="gp-panel gp-panel-center">
-                <div className="gp-grid-toolbar">
-                <div className="gp-tools">
-                    <button
-                        type="button"
-                        className={mode === "plant" ? "active" : ""}
-                        onClick={() => setMode("plant")}
-                    >
-                        Plant Mode
-                    </button>
-                    <button
-                        type="button"
-                        className={mode === "inspect" ? "active" : ""}
-                        onClick={() => setMode("inspect")}
-                    >
-                        Inspect Mode
-                    </button>
-                    
-                    <div>
-                        <label htmlFor="cols">Length: </label>
-                        <input
-                            id="rows"
-                            type="number"
-                            step="1"
-                            min="1"
-                            max="10"
-                            value={rows}
-                            onChange={(e) => setRows(e.target.value)}
+                    <div className="gp-grid-toolbar">
+                        <div className="gp-tools">
+                            <button
+                                type="button"
+                                className={mode === "plant" ? "active" : ""}
+                                onClick={() => setMode("plant")}
+                            >
+                                Plant Mode
+                            </button>
+                            <button
+                                type="button"
+                                className={mode === "inspect" ? "active" : ""}
+                                onClick={() => setMode("inspect")}
+                            >
+                                Inspect Mode
+                            </button>
+                            
+                            <div>
+                                <label htmlFor="rows">Length: </label>
+                                <input
+                                    id="rows"
+                                    type="number"
+                                    step="1"
+                                    min="1"
+                                    max="10"
+                                    value={rows}
+                                    onChange={(e) => setRows(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="cols">Width: </label>
+                                <input
+                                    id="cols"
+                                    type="number"
+                                    step="1"
+                                    min="1"
+                                    max="8"
+                                    value={cols}
+                                    onChange={(e) => setCols(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="gp-garden-actions">
+                            <div className="gp-save-garden">
+                                <label htmlFor="garden-name">Garden Name</label>
+                                <input
+                                    id="garden-name"
+                                    type="text"
+                                    placeholder="My Garden"
+                                    value={gardenName}
+                                    onChange={(e) => setGardenName(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        // TODO: wire save garden to db
+                                        console.log("Saved garden with name:", gardenName);
+                                    }}
+                                >
+                                    Save Garden
+                                </button>
+                            </div>
+                            <div className="gp-load-garden">
+                                <label htmlFor="garden-select">Load Garden</label>
+                                <select
+                                    id="garden-select"
+                                    value={selectedGarden}
+                                    onChange={(e) => setSelectedGarden(e.target.value)}
+                                >
+                                    <option value="">Select a garden...</option>
+                                    {gardens.map((g) => (
+                                        <option key={g.id} value={g.id}>
+                                            {g.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        // TODO: wire save garden to db
+                                        console.log("Load garden clicked for id:", selectedGarden);
+                                    }}
+                                >
+                                    Load Garden
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div className="gp-grid-title">Garden Planner Grid</div>
+                        <GardenPlannerGridFlexbox
+                            rows={rows}
+                            cols={cols}
+                            cell={cell}
+                            placement={placement}
+                            onCellClick={handleCellClick}
+                            getPlantName={(id) => PLANT_INFO[id]?.name ?? id}
+                            getPlantImage={getPlantImage}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="cols">Width: </label>
-                        <input
-                            id="cols"
-                            type="number"
-                            step="1"
-                            min="1"
-                            max="8"
-                            value={cols}
-                            onChange={(e) => setCols(e.target.value)}
-                        />
-                    </div>
-                </div>
-
-            </div>
-
-            <div className="gp-grid-title">Garden Planner Grid</div>
-                    <GardenPlannerGridFlexbox
-                        rows={rows}
-                        cols={cols}
-                        cell={cell}
-                        placement={placement}
-                        onCellClick={handleCellClick}
-                        getPlantName={(id) => PLANT_INFO[id]?.name ?? id}
-                        getPlantImage={getPlantImage}
-                    />
-                </div>
                 
-                {/* Right panel: Plant information*/}
-                <div className="gp-panel gp-panel-right">
-                    <GridInfoPanel
-                        plantInfo={plantInfo}
-                        isEmptyCell={isInspectMode && !selectedPlantId}
-                        isInspectMode={mode === "inspect"}
-                    />
-                </div>
+                    {/* Right panel: Plant information*/}
+                    <div className="gp-panel gp-panel-right">
+                        <GridInfoPanel
+                            plantInfo={plantInfo}
+                            isEmptyCell={isInspectMode && !selectedPlantId}
+                            isInspectMode={mode === "inspect"}
+                        />
+                    </div>
             </div>
         </main>
     )
