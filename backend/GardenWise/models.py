@@ -4,7 +4,8 @@ from django.db import models
 # GardenWise/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.utils import timezone
+from datetime import date, datetime
 # Defines a custom user model (structure of stored user data) and manager for handling account creation, authentication, and admin access
 # Custom user manager
 class AccountManager(BaseUserManager):
@@ -63,11 +64,19 @@ class Garden(models.Model):
     name = models.CharField(max_length=255, default="My Garden")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'name'],
+                name='unique_garden_name_per_user'
+            )
+        ]
+
     def __str__(self):
         return f"{self.name} - {self.user.username}"
     
 # Main Idea is to save plant variables seperately, then combine them into one garden at runtime based on what account they are tied to.   
-from django.utils import timezone
+
 
 class GardenPlant(models.Model):
     garden = models.ForeignKey(Garden, on_delete=models.CASCADE)

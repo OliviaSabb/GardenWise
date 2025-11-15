@@ -31,6 +31,9 @@ function GardenPlanner(){
     const [gardenName, setGardenName] = useState("");
     const [gardens, setGardens] = useState([]);
     const [selectedGarden, setSelectedGarden] = useState("");
+    const [gardensLoading, setGardensLoading] = useState(false);
+    const [gardensError, setGardensError] = useState(null);
+
 
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
@@ -45,13 +48,16 @@ function GardenPlanner(){
         return `/plant-icons-test/${id}.svg`;
     };
 
+    const getPlantName = (id) => {
+        const plant = PLANT_INFO[id];
+        return plant ? plant.common_name : "";
+    };
+
     // handles how many rows/columns and cell size
     const [rows, setRows] = useState(8);
     const [cols, setCols] = useState(8);
     const [cell, setCell] = useState(64);
-    const [gardenData, setGardenData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+
     // date/time inputs for planting and watering
     const [datePlanted, setDatePlanted] = useState("");
     const [timePlanted, setTimePlanted] = useState("");
@@ -75,59 +81,134 @@ function GardenPlanner(){
     }, [rows, cols]);
 
 
-    // useEffect(() => {
-    //     const fetchGardenData = async () => {
-    //         const token = localStorage.getItem('access_token');
+    useEffect(() => {
+        const fetchGardens = async () => {
+            const token = localStorage.getItem('access_token');
+            console.log("Fetching gardens with token:", token);
 
-    //         console.log("Fetching gardens with token:", token);
+            try {
+                setGardensLoading(true);
+                setGardensError("");
+                const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
 
-    //         if (!token) {
-    //             setError("Please log in to access your garden.");
-    //             setLoading(false);
-    //             return;
-    //         }
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Failed ot load gardens: ${response.status} ${text}`);
+                }
 
-    //         try {
-    //             const response = await fetchWithAuth("http://127.0.0.1:8000/api/gardens/");
-
-    //             const responseData = await response.json(); // read once
-
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP ${response.status}: ${JSON.stringify(responseData)}`);
-    //             }
-
-    //             setGardenData(responseData);
-
-    //             // build placement map
-    //             const placementMap = {};
-    //             responseData.forEach(garden => {
-    //                 garden.garden_plants?.forEach(plant => {
-    //                     const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
-    //                     placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
-    //                 });
-    //             });
-    //             setPlacement(placementMap);
+                const data = await response.json();
+                setGardens(data);
+                if(data.length > 0) {
+                    setSelectedGarden(data[0].id.toString());
+                }
+                // build placement map
+                // const placementMap = {};
+                // responseData.forEach(garden => {
+                //     garden.garden_plants?.forEach(plant => {
+                //         const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
+                //         placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
+                //     });
+                // });
+                // setPlacement(placementMap);
 
 
-    //         } catch (err) {
-    //             console.error("Fetch error:", err);
-    //             setError(`Failed to fetch gardens: ${err.message}`);
-    //         }
-    //         finally {
-    //             setLoading(false); 
-    //         }
-    //     };
+            } catch (err) {
+                console.error("Error loading gardens:", err);
+                setGardensError(`Could not load your gardens: ${err.message}`);
+            }
+            finally {
+                setGardensLoading(false); 
+            }
+        };
 
-    //     fetchGardenData();
-    // }, []);
+        fetchGardens();
+    }, []);
 
+    const handleLoadGarden = async () => {
+        if(!selectedGarden) return;
+        try {
+            const response = await fetchWithAuth(`http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/`);
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Failed to load plants: ${response.status} ${text}`);
+            }
 
+            const plants = await response.json();
 
-    // useEffect(() => {
-    //     if (!gardenData) {
-    //         setPlacement({});
-    //     }
-    // }, [gardenData]);
+            const nextPlacement = {};
+
+            plants.forEach((plant) => {
+                const key = plant.position;         
+
+                const match = Object.entries(PLANT_INFO).find(
+                ([plantId, info]) => {
+                    const backendName = plant.type_name?.toLowerCase().trim();
+                    const commonName  = info.common_name?.toLowerCase().trim();
+                    const displayName = info.name?.toLowerCase().trim();
+
+                    return backendName && (backendName === commonName || backendName === displayName);
+                }
+                );
+
+                if (!match) {
+                    console.warn("No PLANT_INFO match for type_id:", plant.type_id);
+                    return;
+                }
+
+                const [plantId] = match;           
+                nextPlacement[key] = plantId;      
+            });
+            setPlacement(nextPlacement);
+            console.log("Loaded garden plants: ", plants);
+        } catch (err) {
+            console.error("Error loading garden plants:", err);
+        }
+    };
+
+    const handleCreateGarden = async () => {
+        const createGardenName = gardenName.trim();
+        if (!createGardenName) {
+            console.warn("Garden name is required");
+            return;
+        }
+
+        try {
+            const response = await fetchWithAuth(
+            "http://127.0.0.1:8000/api/gardens/",
+            {
+                method: "POST",
+                body: JSON.stringify({ name: createGardenName }),
+            }
+            );
+
+            console.log("Save garden response status:", response.status);
+
+            const data = await response.json().catch(() => null);
+            console.log("Save garden raw response:", data);
+
+            if (!response.ok) {
+            throw new Error(
+                `Failed to save garden: ${response.status} ${
+                data ? JSON.stringify(data) : ""
+                }`
+            );
+            }
+
+            const newGarden = data;
+            console.log("Saved garden:", newGarden);
+
+            setGardens((prev) => {
+            // avoid duplicates (which also fixes the key warning)
+            const exists = prev.some((g) => g.id === newGarden.id);
+            return exists ? prev : [...prev, newGarden];
+            });
+
+            setSelectedGarden(String(newGarden.id));
+        } catch (err) {
+            console.error("Error saving garden:", err);
+        }
+    };
+
 
     // vars
     const inspectedPlantId = selectedCell ? placement[selectedCell] : null;
@@ -369,37 +450,40 @@ function GardenPlanner(){
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        // TODO: wire save garden to db
-                                        console.log("Saved garden with name:", gardenName);
-                                    }}
+                                    onClick={handleCreateGarden}
                                 >
-                                    Save Garden
+                                    Create Garden
                                 </button>
                             </div>
                             <div className="gp-load-garden">
                                 <label htmlFor="garden-select">Load Garden</label>
-                                <select
-                                    id="garden-select"
-                                    value={selectedGarden}
-                                    onChange={(e) => setSelectedGarden(e.target.value)}
-                                >
-                                    <option value="">Select a garden...</option>
-                                    {gardens.map((g) => (
-                                        <option key={g.id} value={g.id}>
-                                            {g.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        // TODO: wire save garden to db
-                                        console.log("Load garden clicked for id:", selectedGarden);
-                                    }}
-                                >
-                                    Load Garden
-                                </button>
+                                {gardensLoading ? (
+                                    <p>Loading gardens...</p>
+                                ) : gardensError ? (
+                                    <p>{gardensError}</p>
+                                ) : (
+                                    <>
+                                    <select
+                                        id="garden-select"
+                                        value={selectedGarden}
+                                        onChange={(e) => setSelectedGarden(e.target.value)}
+                                        >
+                                            <option value="">Select a garden...</option>
+                                            {gardens.map((g) => (
+                                                <option key={g.id} value={g.id}>
+                                                    {g.name}
+                                                </option>
+                                            ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        disabled={!selectedGarden}
+                                        onClick={handleLoadGarden}
+                                    >
+                                        Load Garden
+                                    </button>
+                                    </>
+                                )}                                
                             </div>
                         </div>
                     </div>
@@ -427,7 +511,7 @@ function GardenPlanner(){
                                         className="gp-cell" 
                                         data-row={r} 
                                         data-col={c}
-                                        onClick={() => onCellClick(r, c)}
+                                        onClick={() => handleCellClick(r, c)}
                                     >
                                         {imgSrc && (
                                             <img 

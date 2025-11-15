@@ -4,6 +4,9 @@ from .models import Account, PlantType, Garden, GardenPlant
 
 from django.contrib.auth.hashers import make_password
 
+from django.utils import timezone
+from datetime import datetime, date, time
+
 # this file is the middle layer between the database and the API, ensuring data is validated, secure, and correctly formatted.
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,3 +61,4 @@ class GardenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Garden
         fields = '__all__'
+        read_only_fields = ['user', 'garden']
