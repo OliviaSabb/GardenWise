@@ -66,6 +66,13 @@ function GardenPlanner(){
     return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`).toISOString();
     };
 
+    const cells = useMemo(() => {
+        return Array.from({ length: rows * cols }, (_, i) => {
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        return { r, c, key: `${r}-${c}` };
+        });
+    }, [rows, cols]);
 
 
     // useEffect(() => {
@@ -303,6 +310,11 @@ function GardenPlanner(){
 
                 {/* Middle panel: Garden grid planner*/}
                 <div className="gp-panel gp-panel-center">
+                    
+                    <div className="gp-grid-title">
+                        <h3>Garden Planner Grid</h3>
+                    </div>
+
                     <div className="gp-grid-toolbar">
                         <div className="gp-tools">
                             <button
@@ -327,7 +339,7 @@ function GardenPlanner(){
                                     type="number"
                                     step="1"
                                     min="1"
-                                    max="10"
+                                    max="20"
                                     value={rows}
                                     onChange={(e) => setRows(e.target.value)}
                                 />
@@ -339,7 +351,7 @@ function GardenPlanner(){
                                     type="number"
                                     step="1"
                                     min="1"
-                                    max="8"
+                                    max="20"
                                     value={cols}
                                     onChange={(e) => setCols(e.target.value)}
                                 />
@@ -390,29 +402,57 @@ function GardenPlanner(){
                                 </button>
                             </div>
                         </div>
-
                     </div>
 
-                    <div className="gp-grid-title">Garden Planner Grid</div>
-                        <GardenPlannerGridFlexbox
-                            rows={rows}
-                            cols={cols}
-                            cell={cell}
-                            placement={placement}
-                            onCellClick={handleCellClick}
-                            getPlantName={(id) => PLANT_INFO[id]?.name ?? id}
-                            getPlantImage={getPlantImage}
-                        />
+                    
+
+                    <div className="gp-grid-container">
+                        <div
+                            className="gp-grid" 
+                            style={{
+                                // for dynaic changing grid
+                                "--cols": cols,
+                                "--rows": rows,
+                                "--cellSize": `${cell}px` //maybe allow cell size changes
+                            }}
+                        >
+                            {/*cells will be here */}
+                            {cells.map(({r, c, key}) => {
+                                const id = placement[key];
+                                const label = id ? getPlantName?.(id) : "";
+                                const imgSrc = id ? getPlantImage(id) : null;
+                                return (
+                                    <div 
+                                        key={key} 
+                                        className="gp-cell" 
+                                        data-row={r} 
+                                        data-col={c}
+                                        onClick={() => onCellClick(r, c)}
+                                    >
+                                        {imgSrc && (
+                                            <img 
+                                                src={imgSrc}
+                                                className="gp-plant-icon"
+                                                draggable="false"
+                                            />
+                                        )}
+                                        {/* {label} */}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
-                
-                    {/* Right panel: Plant information*/}
-                    <div className="gp-panel gp-panel-right">
-                        <GridInfoPanel
-                            plantInfo={plantInfo}
-                            isEmptyCell={isInspectMode && !selectedPlantId}
-                            isInspectMode={mode === "inspect"}
-                        />
-                    </div>
+                </div>
+
+                {/* Right panel: Plant information*/}
+                <div className="gp-panel gp-panel-right">
+                    <GridInfoPanel
+                        plantInfo={plantInfo}
+                        isEmptyCell={isInspectMode && !selectedPlantId}
+                        isInspectMode={mode === "inspect"}
+                    />
+                </div>
+            
             </div>
         </main>
     )

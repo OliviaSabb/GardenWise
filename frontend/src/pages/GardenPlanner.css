@@ -80,9 +80,15 @@ main{
 
 
 
+.gp-grid-title {
+    display: flex;
+    justify-content: center;
+}
+
 .gp-grid-container {
     position: relative;
     flex: 1;
+    justify-content: center;
     /* overflow: auto; */
     padding: var(--gap);
 }
@@ -92,19 +98,20 @@ main{
     grid-template-columns: repeat(var(--cols), var(--cellSize)); /* TODO; decide size etc*/
     grid-template-rows: repeat(var(--rows), var(--cellSize));
     gap:4px;
-    
+    margin: 0 auto;
     padding: 6px;
     border-radius: 8px;
     border: 1px dashed #cfcfcf;
     max-height: 90vh;
-
+    width: max-content;
+    max-width: 98%; 
     background-image: url("/dirt-icons/dirt.svg");
     background-repeat: repeat;
     background-position: 0 0;
     background-size: 64px 64px;
 
     overflow: auto;
-    overflow-y:scroll; 
+    
 }
 
 .gp-cell {
@@ -209,7 +216,10 @@ main{
 
 /* right panel plant info */
 .gp-details-header { margin-bottom: 12px; }
-.gp-details-title { margin: 0 0 4px; font-size: 1.1rem; }
+.gp-details-title { 
+    margin: 0 0 4px; 
+    font-size: 1.1rem;
+}
 .gp-details-subtitle { margin: 0; color: #6b7280; font-size: 0.9rem; }
 
 .gp-details-body { margin-top: 12px; }
