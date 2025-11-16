@@ -1,16 +1,15 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useNavigate } from "react-router-dom";
 import "./GardenPlanner.css"
-import GardenPlannerGridFlexbox from "../components/GardenPlannerGridFlexbox.jsx";
-import GridInfoPanel from "../components/GridInfoPanel.jsx"
 import { fetchWithAuth } from "../utils/fetchWithAuth";
 import jwt_decode from "jwt-decode"; // This should work with latest versions
 import PLANT_INFO from "../data/plants_test_save_load.json";
-import MOCK_GARDEN from "../data/plants.json";
-import PLANT_CATEGORIES from "../data/plants_categories.json";
 
 
 function GardenPlanner(){
+
+    //TODO: bring back key validation when loading the page, navigate from the page if key times out
+    
     //const navigate = useNavigate();
     // Trying to verify the user is logged in to access garden planner page
     // const userLoggedIn = localStorage.getItem("access_token");
@@ -24,7 +23,6 @@ function GardenPlanner(){
     // }
 
     
-
     // hooks
     
     // load plant types
@@ -37,6 +35,7 @@ function GardenPlanner(){
     const [gardensLoading, setGardensLoading] = useState(false);
     const [gardensError, setGardensError] = useState(null);
     const [selectedGardenName, setSelectedGardenName] = useState("");
+    // TODO: add error check for save
     const [saveError, setSaveError] = useState(null);
 
     const [gardenPlantsByPosition, setGardenPlantsByPosition] = useState({});
@@ -49,7 +48,7 @@ function GardenPlanner(){
     const [placement, setPlacement] = useState({});
 
 
-    // plant list choice, start with veggies
+    // plant list choice, start with veggies. make sure lower case since backend category is saved in lower case. 
     const [category, setCategory] = useState("vegetable");
 
     const getPlantImage = (id) => {
@@ -57,10 +56,6 @@ function GardenPlanner(){
         return `/plant-icons-test/${id}.svg`;
     };
 
-    // const getPlantName = (id) => {
-    //     const plant = PLANT_INFO[id];
-    //     return plant ? plant.common_name : "";
-    // };
     const getPlantTypeById = (id) => {
         if (!id) return null;
         return plantTypes.find((p) => p.id === id) || null;
@@ -124,7 +119,7 @@ function GardenPlanner(){
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-    // get gardens for my load gardens list
+    // get created gardens for my load gardens list
     useEffect(() => {
         const fetchGardens = async () => {
             const token = localStorage.getItem('access_token');
@@ -158,7 +153,7 @@ function GardenPlanner(){
         fetchGardens();
     }, []);
 
-    // load a garden, button load garden
+    // load an already created garden, uses the button load garden
     const handleLoadGarden = async () => {
         if(!selectedGarden) return;
 
@@ -172,12 +167,12 @@ function GardenPlanner(){
             const plants = await response.json();
 
             // building two maps to track plants
-            const nextPlacement = {};
-            const nextPlantsByPosition = {};
+            const nextPlacement = {}; // keys to plant type id
+            const nextPlantsByPosition = {}; // keys to garden plant object
 
             plants.forEach((plant) => {
                 const key = plant.position;   
-                const plantTypeId = plant.plant_type?.id;
+                const plantTypeId = plant.type_id;
 
                 if (!plantTypeId) {
                     console.warn("GardenPlant missing plant_type:", plant);
@@ -238,6 +233,7 @@ function GardenPlanner(){
 
             setSelectedGarden(String(newGarden.id));
 
+            // reset vars incase a different garden was laoded before creating a new garden to start with a blank grid
             setPlacement({});
             setGardenPlantsByPosition({});
             setSelectedCell(null);

@@ -65,7 +65,7 @@ class Garden(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        constraints = [
+        constraints = [ # only unique garden names per user
             models.UniqueConstraint(
                 fields=['user', 'name'],
                 name='unique_garden_name_per_user'

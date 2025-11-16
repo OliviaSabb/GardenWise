@@ -48,6 +48,7 @@ class PlantTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GardenPlantSerializer(serializers.ModelSerializer):
+    # strict format for plant time, water time
     time_planted = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     time_watered = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
 

@@ -7,28 +7,27 @@ from .models import Garden, PlantType, Account, GardenPlant
 # admin.site.register(GardenPlant)
 # admin.site.register(Garden)
 
-# --- PlantType admin ---
+
+# updated admin registers so lists are more detailed
+
+# PlantType  
 @admin.register(PlantType)
 class PlantTypeAdmin(admin.ModelAdmin):
     list_display = ('id', 'common_name', 'category', 'season', 'zone')
-    # search filter
-    search_fields = ('common_name', 'scientific_name')
+    search_fields = ('common_name', 'category', 'season', 'zone')
 
-# --- GardenPlant admin ---
+# GardenPlant  
 @admin.register(GardenPlant)
 class GardenPlantAdmin(admin.ModelAdmin):
     list_display = ('id', 'plant_type', 'garden', 'position', 'time_planted', 'user')
-    list_filter = ('garden', 'plant_type')
+    list_filter = ('garden', 'plant_type',)
     search_fields = ('position',)
 
-
-# --- Garden admin ---
+# Garden 
 @admin.register(Garden)
 class GardenAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'user', 'created_at')
-    list_filter = ('user',)
     search_fields = ('name',)
-
 
 # Account
 @admin.register(Account)
