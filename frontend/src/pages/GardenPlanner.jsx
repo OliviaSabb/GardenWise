@@ -5,7 +5,7 @@ import GardenPlannerGridFlexbox from "../components/GardenPlannerGridFlexbox.jsx
 import GridInfoPanel from "../components/GridInfoPanel.jsx"
 import { fetchWithAuth } from "../utils/fetchWithAuth";
 import jwt_decode from "jwt-decode"; // This should work with latest versions
-import PLANT_INFO from "../data/plants.json";
+import PLANT_INFO from "../data/plants_test_save_load.json";
 import MOCK_GARDEN from "../data/plants.json";
 import PLANT_CATEGORIES from "../data/plants_categories.json";
 
@@ -27,30 +27,49 @@ function GardenPlanner(){
 
     // hooks
     
+    // load plant types
+    const [plantTypes, setPlantTypes] = useState([]);
+
     // garden save and load
     const [gardenName, setGardenName] = useState("");
     const [gardens, setGardens] = useState([]);
     const [selectedGarden, setSelectedGarden] = useState("");
     const [gardensLoading, setGardensLoading] = useState(false);
     const [gardensError, setGardensError] = useState(null);
+    const [selectedGardenName, setSelectedGardenName] = useState("");
+    const [saveError, setSaveError] = useState(null);
 
+    const [gardenPlantsByPosition, setGardenPlantsByPosition] = useState({});
+    const [selectedGardenPlant, setSelectedGardenPlant] = useState(null);
 
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
     const [selectedCell, setSelectedCell] = useState(null);
     const [selectedPlantId, setSelectedPlantId] = useState(null);
     const [placement, setPlacement] = useState({});
-     // plant list choice, start with veggies
-    const [category, setCategory] = useState("Vegetable");
+
+
+    // plant list choice, start with veggies
+    const [category, setCategory] = useState("vegetable");
 
     const getPlantImage = (id) => {
         if (!id) return null;
         return `/plant-icons-test/${id}.svg`;
     };
 
-    const getPlantName = (id) => {
-        const plant = PLANT_INFO[id];
-        return plant ? plant.common_name : "";
+    // const getPlantName = (id) => {
+    //     const plant = PLANT_INFO[id];
+    //     return plant ? plant.common_name : "";
+    // };
+    const getPlantTypeById = (id) => {
+        if (!id) return null;
+        return plantTypes.find((p) => p.id === id) || null;
+    };
+
+    const getPlantImageByType = (plantType) => {
+        if (!plantType) return null;
+        const plantName = plantType.common_name.toLowerCase();
+        return `plant-icons-test/${plantName}.svg`;
     };
 
     // handles how many rows/columns and cell size
@@ -80,7 +99,32 @@ function GardenPlanner(){
         });
     }, [rows, cols]);
 
+    // load plant types
+    useEffect(() => {
+        async function loadPlantTypes() {
+            try {
+                const response = await fetchWithAuth("http://127.0.0.1:8000/api/planttype/plants");
+                const data = await response.json();
+                setPlantTypes(data);
+            } catch (err) {
+                console.error("Error loading plant types:", err);
+            }
+        }
+        loadPlantTypes();
+    }, []);
 
+    // group plants by category
+    const plantsByCategory = useMemo(() => {
+        return plantTypes.reduce((acc, plant) => {
+            if(!acc[plant.category]) acc[plant.category] = [];
+            acc[plant.category].push(plant);
+            return acc;
+        }, {});
+    }, [plantTypes]);
+
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+    // get gardens for my load gardens list
     useEffect(() => {
         const fetchGardens = async () => {
             const token = localStorage.getItem('access_token');
@@ -100,18 +144,8 @@ function GardenPlanner(){
                 setGardens(data);
                 if(data.length > 0) {
                     setSelectedGarden(data[0].id.toString());
+                    setSelectedGardenName(data[0].name);
                 }
-                // build placement map
-                // const placementMap = {};
-                // responseData.forEach(garden => {
-                //     garden.garden_plants?.forEach(plant => {
-                //         const plantInfo = Object.values(PLANT_INFO).find(p => p.id_numeric === plant.type_id);
-                //         placementMap[plant.position] = plantInfo ? plantInfo.name : `Plant ${plant.type_id}`;
-                //     });
-                // });
-                // setPlacement(placementMap);
-
-
             } catch (err) {
                 console.error("Error loading gardens:", err);
                 setGardensError(`Could not load your gardens: ${err.message}`);
@@ -124,8 +158,10 @@ function GardenPlanner(){
         fetchGardens();
     }, []);
 
+    // load a garden, button load garden
     const handleLoadGarden = async () => {
         if(!selectedGarden) return;
+
         try {
             const response = await fetchWithAuth(`http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/`);
             if (!response.ok) {
@@ -135,31 +171,28 @@ function GardenPlanner(){
 
             const plants = await response.json();
 
+            // building two maps to track plants
             const nextPlacement = {};
+            const nextPlantsByPosition = {};
 
             plants.forEach((plant) => {
-                const key = plant.position;         
+                const key = plant.position;   
+                const plantTypeId = plant.plant_type?.id;
 
-                const match = Object.entries(PLANT_INFO).find(
-                ([plantId, info]) => {
-                    const backendName = plant.type_name?.toLowerCase().trim();
-                    const commonName  = info.common_name?.toLowerCase().trim();
-                    const displayName = info.name?.toLowerCase().trim();
-
-                    return backendName && (backendName === commonName || backendName === displayName);
-                }
-                );
-
-                if (!match) {
-                    console.warn("No PLANT_INFO match for type_id:", plant.type_id);
+                if (!plantTypeId) {
+                    console.warn("GardenPlant missing plant_type:", plant);
                     return;
                 }
+                nextPlacement[key] = plantTypeId;
 
-                const [plantId] = match;           
-                nextPlacement[key] = plantId;      
+                nextPlantsByPosition[key] = plant;     
             });
             setPlacement(nextPlacement);
-            console.log("Loaded garden plants: ", plants);
+            setGardenPlantsByPosition(nextPlantsByPosition);
+
+            setSelectedCell(null);
+            setSelectedGardenPlant(null);
+            console.log("Loaded garden plants: ", selectedGarden);
         } catch (err) {
             console.error("Error loading garden plants:", err);
         }
@@ -204,6 +237,11 @@ function GardenPlanner(){
             });
 
             setSelectedGarden(String(newGarden.id));
+
+            setPlacement({});
+            setGardenPlantsByPosition({});
+            setSelectedCell(null);
+            setSelectedGardenPlant(null);
         } catch (err) {
             console.error("Error saving garden:", err);
         }
@@ -214,129 +252,83 @@ function GardenPlanner(){
     const inspectedPlantId = selectedCell ? placement[selectedCell] : null;
     const plantInfo = inspectedPlantId ? PLANT_INFO[inspectedPlantId] : null;
     const isInspectMode = mode === "inspect";
-    //const isEmptyCell = isInspectMode && (!selectedCell || !inspectedPlantId); 
+    const isEmptyCell = isInspectMode && (!selectedCell || !inspectedPlantId); 
 
-    // if we have a plant, plant it
+    // TODO: replace PLANT_INFO with db plant types
+    
+    // handles planting and inspecting. saves when a new plant is planted
 
     const handleCellClick = async (r, c) => {
         const key = `${r}-${c}`;
 
+        // TODO: add token checks if needed here later
+        if (mode === "plant") {
+            if (!selectedPlantId) {
+                console.warn("No plant selected to plant");
+                return;
+            }
 
-        if (mode === "plant" && selectedPlantId) {
-            if (!selectedPlantId) return;
-            setPlacement(prev => ({ ...prev, [key]: selectedPlantId}));
+            if(!selectedGarden) {
+                console.warn("No garden selcted. Create or select a garden first.");
+                return;
+            }
+
+            setSaveError(null);
+
+            try {
+                const plantTypeId = selectedPlantId;
+
+                if (!plantTypeId) {
+                    throw new Error(`Missing id for plant ${plantTypeId}`);
+                }
+
+                // build timestamps
+                const nowIso = new Date().toISOString();
+                const plantedIso = toISOStringLocal(datePlanted, timePlanted) || nowIso;
+                const wateredIso = toISOStringLocal(dateWatered, timeWatered) || nowIso;
+                
+                const response = await fetchWithAuth(
+                    `http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/`,
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            plant_type_id: plantTypeId,
+                            position: key,
+                            health: "Healthy",
+                            notes: "No notes yet",
+                            time_planted: plantedIso,
+                            time_watered: wateredIso,
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
+
+                const savedPlant = await response.json();
+                console.log("Successfully saved plant to backend:", savedPlant);
+
+                setPlacement((prev) => ({...prev, [key]: plantTypeId}));
+                setGardenPlantsByPosition((prev) => ({...prev, [key]: savedPlant}));
+            } catch (error) {
+                console.error("Failed to save plant:", error);
+                setSaveError(error.message);
+            }
+
             return;
         }
 
         if (mode === "inspect") {
             setSelectedCell(key);
+
+            const gp = gardenPlantsByPosition[key] || null;
+            setSelectedGardenPlant(gp);
             return;
         }
     };
 
-
-    //TODO: fix commented out code. Testing functionality and visuals. Removed features like checking db, saving and 
-    // verifying user login for now.
-
-    // const handleCellClick = async (r, c) => {
-    //     const key = `${r}-${c}`;
-
-    //     if (mode === "plant") {
-    //         if (!selectedPlantId) return;
-
-    //         const token = localStorage.getItem('access_token');
-    //         if (!token) {
-    //             setError("You must be logged in.");
-    //             return;
-    //         }
-
-    //         try {
-    //             // Decode token to get user ID
-    //             const decoded = jwt_decode(token);
-    //             const loggedInUserId = decoded?.user_id;
-
-    //             if (!gardenData || gardenData.length === 0) {
-    //                 setError("No garden available. Create a garden first.");
-    //                 return;
-    //             }
-
-    //             console.log("Garden data:", gardenData);
-    //             console.log("Logged in user ID:", loggedInUserId);
-
-    //             // Works with both numeric and object forms
-    //             const userGarden = gardenData.find(g => 
-    //                 Number(g.user) === Number(loggedInUserId) || 
-    //                 Number(g.user?.id) === Number(loggedInUserId)
-    //             );
-
-
-    //             if (!userGarden) {
-    //                 setError("No garden found for your account.");
-    //                 console.warn("No matching garden found for user:", loggedInUserId);
-    //                 return;
-    //             }
-
-    //             //Used emojis for testing so I could see erroe better
-    //             const gardenId = userGarden.id;
-    //             console.log("Found garden ID:", gardenId);
-    //             console.log("Matched garden:", userGarden);
-    //             // Use the numeric id for PlantType
-    //             const plantNumericId = PLANT_INFO[selectedPlantId]?.id_numeric;
-    //             if (!plantNumericId) {
-    //                 setError(`Missing numeric ID for ${selectedPlantId}`);
-    //                 console.error("Missing id_numeric for plant:", selectedPlantId);
-    //                 return;
-    //             }
-
-    //             console.log(`Planting ${selectedPlantId} (ID ${plantNumericId}) at ${key}`);
-
-    //             const response = await fetchWithAuth(
-    //                 `http://127.0.0.1:8000/api/gardens/${gardenId}/plants/`,
-    //                 {
-    //                     method: 'POST',
-    //                     body: JSON.stringify({
-    //                         plant_type: plantNumericId,
-    //                         position: key,
-    //                         health: "Healthy",
-    //                         time_planted: toISOStringLocal(datePlanted, timePlanted) || new Date().toISOString(),
-    //                         time_watered: toISOStringLocal(dateWatered, timeWatered) || new Date().toISOString(),
-
-    //                     }),
-    //                 }
-    //             );
-
-    //             if (!response.ok) {
-    //                 const errData = await response.text();
-    //                 throw new Error(`HTTP ${response.status}: ${errData}`);
-    //             }
-
-    //             const savedPlant = await response.json();
-    //             console.log("Successfully saved plant to backend:", savedPlant);
-
-    //             // Update grid instantly
-    //             setPlacement(prev => ({ ...prev, [key]: selectedPlantId }));
-
-    //         } catch (error) {
-    //             console.error("Save failed:", error);
-    //             setError('Failed to save plant data: ' + error.message);
-    //         }
-
-    //         return;
-    //     }
-
-    //     if (mode === "inspect") {
-    //         setSelectedCell(key);
-    //         return;
-    //     }
-    // };
-
-    // if (loading) {
-    //     return <div>Loading garden data...</div>;
-    // }
-
-    // if (error) {
-    //     return <div>Error: {error}</div>;
-    // }
     return (
         <main className="gp-planner">
             <div className="gp-layout">
@@ -344,31 +336,29 @@ function GardenPlanner(){
                 {/* Left panel: Plant list*/}
                 <div className="gp-panel gp-panel-left">
                     <div className="gp-tablist" role="tablist">
-                        {Object.keys(PLANT_CATEGORIES).map((cat) => (
+                        {Object.keys(plantsByCategory).map((cat) => (
                             <button 
                                 key={cat}
                                 className={`gp-tab ${category === cat ? "active" : ""}`}
                                 role="tab"
                                 onClick={() => setCategory(cat)}
                             >
-                                {cat}
+                                {capitalize(cat)}
                             </button>
                         ))}
                     </div>
 
                     {/* tab lists */}
                     <ul className="gp-plant-list" role="tabpanel">
-                        {(PLANT_CATEGORIES[category] || []).map((plantId) => {
-                            const info = PLANT_INFO[plantId];
-                            if (!info) return null;
-                            const plantSvg = getPlantImage(plantId);
+                        {(plantsByCategory[category] || []).map((plant) => {
+                            const plantSvg = getPlantImage(plant.common_name.toLowerCase());
                             return (
                                 <li
-                                    key={plantId}
-                                    className={`gp-plant-item ${selectedPlantId === plantId ? "selected" : ""}`}
+                                    key={plant.id}
+                                    className={`gp-plant-item ${selectedPlantId === plant.id ? "selected" : ""}`}
                                     onClick={() => {
-                                        console.log("Selected: ", plantId);
-                                        setSelectedPlantId(plantId);
+                                        console.log("Selected: ", plant.id);
+                                        setSelectedPlantId(plant.id);
                                     }}
                                 >
                                     <div className="gp-plant-list-tile">
@@ -381,7 +371,7 @@ function GardenPlanner(){
                                                 e.currentTarget.src = null; //potential filler if an image fails to load
                                             }}
                                         />
-                                        <div className="gp-plant-name">{info.name}</div>
+                                        <div className="gp-plant-name">{plant.common_name}</div>
                                     </div>
                                 </li>
                             );
@@ -394,6 +384,7 @@ function GardenPlanner(){
                     
                     <div className="gp-grid-title">
                         <h3>Garden Planner Grid</h3>
+                        <div>Current plants in db. test with these. Garlic,	Eggplant, Cucumber, Corn, Celery,	Cauliflower, Cabbage, Brussels Sprouts,	Bell Pepper, Basil, Broccoli, Rosemary,	Lettuce, Carrot, Cucumber, Tomato, Pumpkin</div>
                     </div>
 
                     <div className="gp-grid-toolbar">
@@ -466,7 +457,13 @@ function GardenPlanner(){
                                     <select
                                         id="garden-select"
                                         value={selectedGarden}
-                                        onChange={(e) => setSelectedGarden(e.target.value)}
+                                        onChange={(e) => {
+                                            setSelectedGarden(e.target.value);
+                                            const g = gardens.find(garden => garden.id.toString() === e.target.value);
+                                            console.log("garden name " + g + " " + g.name);
+                                            setSelectedGardenName(g ? g.name : "");
+                                            console.log(selectedGardenName);
+                                        }}
                                         >
                                             <option value="">Select a garden...</option>
                                             {gardens.map((g) => (
@@ -502,9 +499,9 @@ function GardenPlanner(){
                         >
                             {/*cells will be here */}
                             {cells.map(({r, c, key}) => {
-                                const id = placement[key];
-                                const label = id ? getPlantName?.(id) : "";
-                                const imgSrc = id ? getPlantImage(id) : null;
+                                const plantTypeId = placement[key];
+                                const plantType = getPlantTypeById(plantTypeId);
+                                const imgSrc = plantType ? getPlantImageByType(plantType) : null;
                                 return (
                                     <div 
                                         key={key} 
@@ -527,14 +524,66 @@ function GardenPlanner(){
                         </div>
                     </div>
                 </div>
-
+                
                 {/* Right panel: Plant information*/}
                 <div className="gp-panel gp-panel-right">
-                    <GridInfoPanel
-                        plantInfo={plantInfo}
-                        isEmptyCell={isInspectMode && !selectedPlantId}
-                        isInspectMode={mode === "inspect"}
-                    />
+                    <div>
+                        <header>
+                            <h2>
+                                {plantInfo?.name ?? (isInspectMode ? "No plant selected" : "Plant details")}
+                            </h2>
+                            <p>
+                                {isInspectMode
+                                ? (isEmptyCell
+                                    ? "Click a planted cell to view details."
+                                    : (plantInfo ? "" : "Select a cell to view details"))
+                                : "Switch to inspect mode and click a cell to view details."}
+                            </p>
+                        </header>
+
+                        {!plantInfo && !selectedGardenPlant ? (
+                            <div>
+                                <div className="gp-skel-line" style={{ width: "60%" }} />
+                                <div className="gp-skel-line" style={{ width: "40%" }} />
+                                <div className="gp-skel-line" style={{ width: "75%" }} />
+                                <div className="gp-skel-line" style={{ width: "55%" }} />
+                            </div>
+                        ) : (
+                            <div>
+                                <dl className="gp-details-list">
+                                <div className="gp-detail-row">
+                                    <dt>Plant</dt>
+                                    <dd>{selectedGardenPlant.plant_type?.common_name}</dd>
+                                </div>
+
+                                <div className="gp-detail-row">
+                                    <dt>Position</dt>
+                                    <dd>{selectedGardenPlant.position}</dd>
+                                </div>
+
+                                <div className="gp-detail-row">
+                                    <dt>Date planted</dt>
+                                    <dd>{selectedGardenPlant.time_planted}</dd>
+                                </div>
+
+                                <div className="gp-detail-row">
+                                    <dt>Last watered</dt>
+                                    <dd>{selectedGardenPlant.time_watered}</dd>
+                                </div>
+
+                                <div className="gp-detail-row">
+                                    <dt>Health</dt>
+                                    <dd>{selectedGardenPlant.health}</dd>
+                                </div>
+
+                                <div className="gp-detail-row">
+                                    <dt>Notes</dt>
+                                    <dd>{selectedGardenPlant.notes || "No notes yet."}</dd>
+                                </div>
+                                </dl>
+                            </div>
+                        )}
+                    </div>
                 </div>
             
             </div>

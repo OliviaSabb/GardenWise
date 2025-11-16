@@ -48,9 +48,23 @@ class PlantTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GardenPlantSerializer(serializers.ModelSerializer):
+    time_planted = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
+    time_watered = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
+
+    # attaching full plant type infor to garden plants
+    plant_type = PlantTypeSerializer(read_only=True)
+    
     type_id = serializers.IntegerField(source='plant_type.id', read_only=True)
     type_name = serializers.CharField(source='plant_type.common_name', read_only=True)
 
+
+    # write to db acceptance
+    plant_type_id = serializers.PrimaryKeyRelatedField(
+        source='plant_type',
+        queryset=PlantType.objects.all(),
+        write_only=True
+    )
+    
     class Meta:
         model = GardenPlant
         fields = '__all__'
@@ -61,4 +75,4 @@ class GardenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Garden
         fields = '__all__'
-        read_only_fields = ['user', 'garden']
+        read_only_fields = ['user']

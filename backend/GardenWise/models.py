@@ -54,7 +54,7 @@ class PlantType(models.Model):
     season = models.CharField(default = "NULL")
     zone = models.CharField(default = "NULL")
     spacing = models.CharField(default = "NULL")# In Fahrenheit
-
+    category = models.CharField(max_length=50, default="vegetable");
 
     def __str__(self):
         return self.common_name
