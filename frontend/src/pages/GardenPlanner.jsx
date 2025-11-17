@@ -40,6 +40,7 @@ function GardenPlanner(){
 
     const [gardenPlantsByPosition, setGardenPlantsByPosition] = useState({});
     const [selectedGardenPlant, setSelectedGardenPlant] = useState(null);
+    const [selectedGardenPlantTime, setSelectedGardenPlantTime] = useState(null)
 
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
@@ -265,7 +266,7 @@ function GardenPlanner(){
             }
 
             if(!selectedGarden) {
-                console.warn("No garden selcted. Create or select a garden first.");
+                console.warn("No garden selected. Create or select a garden first.");
                 return;
             }
 
@@ -323,6 +324,38 @@ function GardenPlanner(){
             setSelectedGardenPlant(gp);
             return;
         }
+    };
+
+    const handleWatertimeChange = async () => {
+        const nowIso = new Date().toISOString();
+
+        const response = await fetchWithAuth(
+                    `http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/${selectedGardenPlant.id}/`,
+                    {
+                        method: "PATCH",
+                        body: JSON.stringify({
+                            time_watered: nowIso,
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
+
+                const savedPlant = await response.json();
+                console.log("Successfully saved plant to backend:", savedPlant);
+
+                const nowIsoCondense = nowIso.substring(0, 10) + " " + nowIso.substring(11, 16);
+
+            setSelectedGardenPlant(prevDict => {
+                return {
+                    ...prevDict,
+                    time_watered: nowIsoCondense
+                };
+            });
+
     };
 
     return (
@@ -565,6 +598,7 @@ function GardenPlanner(){
                                 <div className="gp-detail-row">
                                     <dt>Last watered</dt>
                                     <dd>{selectedGardenPlant.time_watered}</dd>
+                                    <button onClick={() => handleWatertimeChange()}>Mark Watered</button>
                                 </div>
 
                                 <div className="gp-detail-row">

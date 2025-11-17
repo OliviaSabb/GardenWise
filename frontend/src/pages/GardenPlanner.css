@@ -227,6 +227,7 @@ main{
 .gp-detail-row { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; }
 .gp-detail-row dt { color: #6b7280; }
 .gp-detail-row dd { margin: 0; }
+.gp-detail-row button {grid-column: 2; max-width: 110px;}
 
 .gp-details-empty { padding: 8px 0; }
 .gp-skel-line { height: 10px; background: #f1f5f9; border-radius: 6px; margin: 8px 0; }
