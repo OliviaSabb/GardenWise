@@ -229,6 +229,10 @@ main{
 .gp-detail-row dd { margin: 0; }
 .gp-detail-row button {grid-column: 2; max-width: 110px;}
 
+.gp-detail-delete {display: flex; justify-content: center; margin-top: 15px;}
+.gp-detail-delete button {background-color: rgb(248, 80, 80); border: 1px solid grey; border-width: 1px; border-radius: 2px; width: 250px; font-size: 17px; color: white; transition: background-color 0.3s ease;}
+.gp-detail-delete button:hover {background-color: rgb(200, 65, 65);}
+
 .gp-details-empty { padding: 8px 0; }
 .gp-skel-line { height: 10px; background: #f1f5f9; border-radius: 6px; margin: 8px 0; }
 

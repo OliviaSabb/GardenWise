@@ -40,7 +40,6 @@ function GardenPlanner(){
 
     const [gardenPlantsByPosition, setGardenPlantsByPosition] = useState({});
     const [selectedGardenPlant, setSelectedGardenPlant] = useState(null);
-    const [selectedGardenPlantTime, setSelectedGardenPlantTime] = useState(null)
 
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
@@ -326,6 +325,7 @@ function GardenPlanner(){
         }
     };
 
+    // Updates selected garden plants watered time to current time
     const handleWatertimeChange = async () => {
         const nowIso = new Date().toISOString();
 
@@ -339,15 +339,16 @@ function GardenPlanner(){
                     }
                 );
 
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errText}`);
-                }
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errText}`);
+            }
 
-                const savedPlant = await response.json();
-                console.log("Successfully saved plant to backend:", savedPlant);
+            const savedPlant = await response.json();
+            console.log("Successfully saved plant to backend:", savedPlant);
 
-                const nowIsoCondense = nowIso.substring(0, 10) + " " + nowIso.substring(11, 16);
+            // Changes the ISO string so that it displays properly 
+            const nowIsoCondense = nowIso.substring(0, 10) + " " + nowIso.substring(11, 16);
 
             setSelectedGardenPlant(prevDict => {
                 return {
@@ -355,6 +356,25 @@ function GardenPlanner(){
                     time_watered: nowIsoCondense
                 };
             });
+
+    };
+
+    const gardenPlantDelete = async () => {
+        const response = await fetchWithAuth(
+                    `http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/${selectedGardenPlant.id}/`,
+                    {
+                        method: "DELETE",
+                    }
+                );
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errText}`);
+            }
+
+            console.log("Successfully deleted plant in backend");
+
+            handleLoadGarden()
 
     };
 
@@ -609,6 +629,10 @@ function GardenPlanner(){
                                 <div className="gp-detail-row">
                                     <dt>Notes</dt>
                                     <dd>{selectedGardenPlant.notes || "No notes yet."}</dd>
+                                </div>
+
+                                <div className="gp-detail-delete">
+                                    <button onClick={() => gardenPlantDelete()}>Delete Plant</button>
                                 </div>
                                 </dl>
                             </div>
