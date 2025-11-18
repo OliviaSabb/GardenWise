@@ -41,6 +41,18 @@ function GardenPlanner(){
     const [gardenPlantsByPosition, setGardenPlantsByPosition] = useState({});
     const [selectedGardenPlant, setSelectedGardenPlant] = useState(null);
 
+    // notes
+    const [editingNotes, setEditingNotes] = useState(false);
+    const [notesDraft, setNotesDraft] = useState("");
+    const startEditingNotes = () => {
+        setEditingNotes(true);
+        setNotesDraft(selectedGardenPlant?.notes || "");
+    }
+    const cancelEditingNotes= () => {
+        setEditingNotes(false);
+        setNotesDraft("");
+    }
+
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
     const [selectedCell, setSelectedCell] = useState(null);
@@ -117,6 +129,7 @@ function GardenPlanner(){
         }, {});
     }, [plantTypes]);
 
+    // capitalize the first letter of the name of plants
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
     // get created gardens for my load gardens list
@@ -187,6 +200,8 @@ function GardenPlanner(){
 
             setSelectedCell(null);
             setSelectedGardenPlant(null);
+
+            return nextPlantsByPosition;
             console.log("Loaded garden plants: ", selectedGarden);
         } catch (err) {
             console.error("Error loading garden plants:", err);
@@ -244,7 +259,7 @@ function GardenPlanner(){
     };
 
 
-    // vars
+    // vars for cells
     const inspectedPlantId = selectedCell ? placement[selectedCell] : null;
     const plantInfo = inspectedPlantId ? PLANT_INFO[inspectedPlantId] : null;
     const isInspectMode = mode === "inspect";
@@ -374,9 +389,36 @@ function GardenPlanner(){
 
             console.log("Successfully deleted plant in backend");
 
-            handleLoadGarden()
+            handleLoadGarden();
 
     };
+
+    const handleSaveNotes = async () => {
+        const position = selectedGardenPlant.position;
+
+        const response = await fetchWithAuth(
+            `http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/${selectedGardenPlant.id}/`,
+            {
+                method: "PATCH",
+                body: JSON.stringify({ notes: notesDraft })
+            }
+        )
+
+        if(!response.ok) {
+            const errText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errText}`);
+        }
+
+        console.log("Successfully updated notes");
+        const newMap = await handleLoadGarden();
+        
+
+        const reloadPlant = newMap[position];
+        setMode("inspect");
+        setSelectedGardenPlant(reloadPlant);
+        setSelectedCell(position);
+        setEditingNotes(false);
+    }
 
     return (
         <main className="gp-planner">
@@ -626,9 +668,34 @@ function GardenPlanner(){
                                     <dd>{selectedGardenPlant.health}</dd>
                                 </div>
 
-                                <div className="gp-detail-row">
+                                {/* <div className="gp-detail-row">
                                     <dt>Notes</dt>
                                     <dd>{selectedGardenPlant.notes || "No notes yet."}</dd>
+                                </div> */}
+                                <div className="gp-detail-row">
+                                    <dt>Notes</dt>
+                                    <dd>
+                                        {editingNotes ? (
+                                            <div>
+                                                <textarea
+                                                    value={notesDraft}
+                                                    onChange={(e) => setNotesDraft(e.target.value)}
+                                                    maxLength={250}
+                                                    rows={4}
+                                                    placeholder="Add notes about this plant!"
+                                                />
+                                                <div>
+                                                    <button onClick={handleSaveNotes}>Save</button>
+                                                    <button onClick={cancelEditingNotes}>Cancel</button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <p>{selectedGardenPlant.notes || "No notes yet."}</p>
+                                                <button onClick={startEditingNotes}>Update Notes</button>
+                                            </div>
+                                        )}
+                                    </dd>
                                 </div>
 
                                 <div className="gp-detail-delete">
