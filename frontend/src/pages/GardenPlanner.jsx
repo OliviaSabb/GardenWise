@@ -57,6 +57,7 @@ function GardenPlanner(){
     const [mode, setMode] = useState("plant");
     const [selectedCell, setSelectedCell] = useState(null);
     const [selectedPlantId, setSelectedPlantId] = useState(null);
+    const [selectedPlantType, setSelectedPlantType] = useState(null);
     const [placement, setPlacement] = useState({});
 
 
@@ -450,6 +451,7 @@ function GardenPlanner(){
                                     onClick={() => {
                                         console.log("Selected: ", plant.id);
                                         setSelectedPlantId(plant.id);
+                                        setSelectedPlantType(plant);
                                     }}
                                 >
                                     <div className="gp-plant-list-tile">
@@ -621,18 +623,19 @@ function GardenPlanner(){
                     <div>
                         <header>
                             <h2>
-                                {plantInfo?.name ?? (isInspectMode ? "No plant selected" : "Plant details")}
+                                {plantInfo?.name ?? (isInspectMode ? "Inspect Mode" : "Plant Mode")}
                             </h2>
                             <p>
                                 {isInspectMode
                                 ? (isEmptyCell
                                     ? "Click a planted cell to view details."
-                                    : (plantInfo ? "" : "Select a cell to view details"))
+                                    : (plantInfo ? "" : "Switch to Plant Mode to create new plants"))
                                 : "Switch to inspect mode and click a cell to view details."}
                             </p>
                         </header>
-
-                        {!plantInfo && !selectedGardenPlant ? (
+                        
+                        {isInspectMode ? 
+                        (!plantInfo && !selectedGardenPlant ? (
                             <div>
                                 <div className="gp-skel-line" style={{ width: "60%" }} />
                                 <div className="gp-skel-line" style={{ width: "40%" }} />
@@ -703,6 +706,11 @@ function GardenPlanner(){
                                 </div>
                                 </dl>
                             </div>
+                        )) : (
+                        <div className="gp-plantmode-selected">
+                            <p>Selected Plant:</p>
+                            {selectedPlantType ? <p>{selectedPlantType.common_name}</p> : <p></p>}
+                        </div>
                         )}
                     </div>
                 </div>
