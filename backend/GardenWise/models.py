@@ -64,6 +64,7 @@ class Garden(models.Model):
     name = models.CharField(max_length=255, default="My Garden")
     created_at = models.DateTimeField(auto_now_add=True)
 
+
     class Meta:
         constraints = [ # only unique garden names per user
             models.UniqueConstraint(

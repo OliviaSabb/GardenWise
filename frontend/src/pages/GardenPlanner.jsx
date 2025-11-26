@@ -91,6 +91,8 @@ function GardenPlanner(){
     const [dateWatered, setDateWatered] = useState("");
     const [timeWatered, setTimeWatered] = useState("");
 
+    const [creatingGarden, setCreatingGarden] = useState(false);
+
     // helper: combine date and time to ISO format
     const toISOStringLocal = (dateStr, timeStr) => {
     if (!dateStr) return null;
@@ -257,6 +259,8 @@ function GardenPlanner(){
         } catch (err) {
             console.error("Error saving garden:", err);
         }
+
+        setCreatingGarden(false);
     };
 
 
@@ -273,8 +277,12 @@ function GardenPlanner(){
     const handleCellClick = async (r, c) => {
         const key = `${r}-${c}`;
 
+        const gp = gardenPlantsByPosition[key] || null;
+
         // TODO: add token checks if needed here later
-        if (mode === "plant") {
+        if (gp == null) {
+            setMode("plant");
+
             if (!selectedPlantId) {
                 console.warn("No plant selected to plant");
                 return;
@@ -332,10 +340,9 @@ function GardenPlanner(){
             return;
         }
 
-        if (mode === "inspect") {
+        if (gp != null) {
+            setMode("inspect");
             setSelectedCell(key);
-
-            const gp = gardenPlantsByPosition[key] || null;
             setSelectedGardenPlant(gp);
             return;
         }
@@ -449,6 +456,7 @@ function GardenPlanner(){
                                     key={plant.id}
                                     className={`gp-plant-item ${selectedPlantId === plant.id ? "selected" : ""}`}
                                     onClick={() => {
+                                        setMode("plant");
                                         console.log("Selected: ", plant.id);
                                         setSelectedPlantId(plant.id);
                                         setSelectedPlantType(plant);
@@ -477,26 +485,11 @@ function GardenPlanner(){
                     
                     <div className="gp-grid-title">
                         <h3>Garden Planner Grid</h3>
-                        <div>Current plants in db. test with these. Garlic,	Eggplant, Cucumber, Corn, Celery,	Cauliflower, Cabbage, Brussels Sprouts,	Bell Pepper, Basil, Broccoli, Rosemary,	Lettuce, Carrot, Cucumber, Tomato, Pumpkin</div>
                     </div>
 
                     <div className="gp-grid-toolbar">
                         <div className="gp-tools">
-                            <button
-                                type="button"
-                                className={mode === "plant" ? "active" : ""}
-                                onClick={() => setMode("plant")}
-                            >
-                                Plant Mode
-                            </button>
-                            <button
-                                type="button"
-                                className={mode === "inspect" ? "active" : ""}
-                                onClick={() => setMode("inspect")}
-                            >
-                                Inspect Mode
-                            </button>
-                            
+                            <h4>Garden Dimensions:</h4>
                             <div>
                                 <label htmlFor="rows">Length: </label>
                                 <input
@@ -523,24 +516,9 @@ function GardenPlanner(){
                             </div>
                         </div>
                         <div className="gp-garden-actions">
-                            <div className="gp-save-garden">
-                                <label htmlFor="garden-name">Garden Name</label>
-                                <input
-                                    id="garden-name"
-                                    type="text"
-                                    placeholder="My Garden"
-                                    value={gardenName}
-                                    onChange={(e) => setGardenName(e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleCreateGarden}
-                                >
-                                    Create Garden
-                                </button>
-                            </div>
+                           
                             <div className="gp-load-garden">
-                                <label htmlFor="garden-select">Load Garden</label>
+                                <label htmlFor="garden-select">Garden: </label>
                                 {gardensLoading ? (
                                     <p>Loading gardens...</p>
                                 ) : gardensError ? (
@@ -574,6 +552,38 @@ function GardenPlanner(){
                                     </button>
                                     </>
                                 )}                                
+                            </div>
+
+                            <div className="gp-save-garden">
+
+                                {creatingGarden ? 
+                                    (<div>
+                                        <label htmlFor="garden-name">Garden Name: </label>
+                                        <input
+                                            id="garden-name"
+                                            type="text"
+                                            placeholder="My Garden"
+                                            value={gardenName}
+                                            onChange={(e) => setGardenName(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleCreateGarden}
+                                        >
+                                            Create Garden
+                                        </button>
+                                    </div>) : 
+
+                                    (<div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCreatingGarden(true)}
+                                            
+                                        >
+                                            Create Garden
+                                        </button>
+                                    </div>)
+                                }   
                             </div>
                         </div>
                     </div>
@@ -623,14 +633,14 @@ function GardenPlanner(){
                     <div>
                         <header>
                             <h2>
-                                {plantInfo?.name ?? (isInspectMode ? "Inspect Mode" : "Plant Mode")}
+                                {plantInfo?.name ?? (isInspectMode ? "Plant Information" : "Plant Mode")}
                             </h2>
                             <p>
                                 {isInspectMode
                                 ? (isEmptyCell
                                     ? "Click a planted cell to view details."
-                                    : (plantInfo ? "" : "Switch to Plant Mode to create new plants"))
-                                : "Switch to inspect mode and click a cell to view details."}
+                                    : (plantInfo ? "" : ""))
+                                : "Click on Empty Grid Space to Plant"}
                             </p>
                         </header>
                         
