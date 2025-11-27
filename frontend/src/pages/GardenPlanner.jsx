@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./GardenPlanner.css"
 import { fetchWithAuth } from "../utils/fetchWithAuth";
 import jwt_decode from "jwt-decode"; // This should work with latest versions
@@ -12,15 +12,16 @@ function GardenPlanner(){
     
     //const navigate = useNavigate();
     // Trying to verify the user is logged in to access garden planner page
-    // const userLoggedIn = localStorage.getItem("access_token");
-    // if(!userLoggedIn) {
-    //     return (
-    //         <main className="gp-planner">
-    //             <p>You must be logged in to view this page!</p>
-    //         </main>
-    //     )
-    //     // or can render some sort of info page here instead with register login buttons
-    // }
+    const userLoggedIn = localStorage.getItem("access_token");
+    console.log(userLoggedIn);
+    if(!userLoggedIn) {
+        return (
+            <main className="gp-planner">
+                <p>You must be logged in to view this page! <Link to="/login">Click HERE to login!!</Link></p>
+            </main>
+        )
+        // or can render some sort of info page here instead with register login buttons
+    }
 
     
     // hooks

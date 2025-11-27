@@ -2,7 +2,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import "./Login.css";
 
-function Login() {
+function Login({OnLoginSuccess}) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -30,9 +30,14 @@ function Login() {
             if (response.ok && data.access) {
                 localStorage.setItem("access_token", data.access);
                 localStorage.setItem("refresh_token", data.refresh);
-                alert("Login successful");
-                navigate("/garden-planner");
-                return;
+                
+                
+                if(OnLoginSuccess) {
+                    alert("Login successful");
+                    navigate("/garden-planner");
+                }
+                
+                //return;
             }
 
             
