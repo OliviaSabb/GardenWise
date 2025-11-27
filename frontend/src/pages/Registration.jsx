@@ -8,6 +8,7 @@ function Registration(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
+    const [zipcode, setZipcode] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
@@ -104,6 +105,18 @@ function Registration(){
                             required
                             value={confirm}
                             onChange={(e) => setConfirm(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="form-field"> {/* added zipcode */}
+                        <input
+                            id="reg-zipcode"
+                            name="zipcode"
+                            className="input input-zipcode"
+                            type="text"
+                            placeholder="Zip Code"
+                            value={zipcode}
+                            onChange={(e) => setZipcode(e.target.value)}
                         />
                     </div>
                    

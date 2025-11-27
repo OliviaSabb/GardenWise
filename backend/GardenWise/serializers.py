@@ -11,7 +11,7 @@ from datetime import datetime, date, time
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'username', 'email', 'password', 'zipcode']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_username(self, value):

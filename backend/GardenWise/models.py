@@ -9,21 +9,21 @@ from datetime import date, datetime
 # Defines a custom user model (structure of stored user data) and manager for handling account creation, authentication, and admin access
 # Custom user manager
 class AccountManager(BaseUserManager):
-    def create_user(self, username, email=None, password=None):
+    def create_user(self, username, email=None, password=None, zipcode=None):
         if not username:
             raise ValueError("Username is required")
         if not email:
             raise ValueError("Email is required")
         
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email)
+        user = self.model(username=username, email=email, zipcode=zipcode)
         user.set_password(password)  # hashes password
         user.is_active = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email=None, password=None): #create django admin account
-        user = self.create_user(username=username, email=email, password=password)
+    def create_superuser(self, username, email=None, password=None, zipcode=None): #create django admin account
+        user = self.create_user(username=username, email=email, password=password, zipcode=zipcode)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -33,6 +33,7 @@ class AccountManager(BaseUserManager):
 class Account(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=32, unique=True)
     email = models.EmailField(unique=True)
+    zipcode = models.CharField(max_length=10, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
