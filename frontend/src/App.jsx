@@ -14,9 +14,10 @@ function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access_token'));
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('access_token'));
-  }, []);
+  const handleLogInSuccess = () => {
+    setIsLoggedIn(true);
+    navigate("/garden-planner");
+  }
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refresh_token");
@@ -43,6 +44,9 @@ function AppContent() {
 
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+
+    setIsLoggedIn(false);
+
     navigate("/login");
   };
 
@@ -58,7 +62,7 @@ function AppContent() {
             <Route path="/garden-planner" element={<GardenPlanner />} />
             <Route path="/plant-info" element={<PlantInfo />} />
             <Route path="/plant-info/:id" element={<SingularPlantInfo />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login onLoginSuccess={handleLogInSuccess}/>} />
             <Route path="/register" element={<Registration />} />
           </Routes>
       </main>

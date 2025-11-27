@@ -1,9 +1,17 @@
+function handleAuthFailure() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  window.location.href = "/login";
+}
+
+
 export async function fetchWithAuth(url, options = {}) {
   let access = localStorage.getItem("access_token");
   const refresh = localStorage.getItem("refresh_token");
 
   if (!access) {
     console.error("No access token available. Aborting request.");
+    handleAuthFailure();
     return new Response(JSON.stringify({ detail: "No access token" }), { status: 401 });
   }
 
@@ -19,8 +27,14 @@ export async function fetchWithAuth(url, options = {}) {
   let response = await fetch(url, { ...options, headers });
 
   // If unauthorized, try refreshing
-  if (response.status === 401 && refresh) {
+  if (response.status === 401) {
     console.warn("Access token expired or invalid, attempting refresh...");
+
+    if (!refresh) {
+      console.warn("No refresh token available. Forcing logout.");
+      handleAuthFailure();
+      return response;
+    }
 
     try {
       const refreshResponse = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
@@ -28,6 +42,14 @@ export async function fetchWithAuth(url, options = {}) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refresh }),
       });
+      
+      if(!refreshResponse.ok) {
+        const refreshError = await refreshResponse.json().catch(() => ({}));
+        console.error("Token refresh failed:", refreshError);
+        handleAuthFailure();
+        return response;
+      }
+
 
       const data = await refreshResponse.json();
       console.log("Refresh response:", data);
@@ -41,8 +63,7 @@ export async function fetchWithAuth(url, options = {}) {
         response = await fetch(url, { ...options, headers: retryHeaders });
       } else {
         console.error("Token refresh failed:", data);
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        handleAuthFailure();
       }
     } catch (err) {
       console.error("Error refreshing token:", err);
