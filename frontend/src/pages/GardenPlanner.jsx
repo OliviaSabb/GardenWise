@@ -10,7 +10,7 @@ function GardenPlanner(){
 
     //TODO: bring back key validation when loading the page, navigate from the page if key times out
     
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
     // Trying to verify the user is logged in to access garden planner page
     const userLoggedIn = localStorage.getItem("access_token");
     console.log(userLoggedIn);
@@ -264,6 +264,38 @@ function GardenPlanner(){
         setCreatingGarden(false);
     };
 
+    const reformatTime = async (originalTime) => {
+        let dateWateredReform = originalTime.split(' '); // Split date into day and time
+        let dayMonthYear = dateWateredReform[0].split('-') // Splits date into day, month, year
+
+        dayMonthYear = dayMonthYear[1] + '/' + dayMonthYear[2] + '/' + dayMonthYear[0];    
+        let timeOfDay = dateWateredReform[1].split(':') //Splits time into hour and minute
+        let hour = parseInt(timeOfDay[0])
+        let aOrP = "PM";
+        hour += 6; 
+        if (hour > 24){
+            hour -= 24;
+        }
+        if (hour >= 13){ 
+            aOrP = "AM";
+            hour -= 12;
+            if (hour < 10){
+                   timeOfDay[0] = "0" + hour; 
+                }                
+            else {
+                timeOfDay[0] = hour; 
+            }
+        }
+        else {
+            timeOfDay[0] = hour; 
+        }
+  
+        timeOfDay = timeOfDay[0] + ':' + timeOfDay[1] + " " + aOrP;
+
+        dateWateredReform = timeOfDay + ' - ' + dayMonthYear;
+        return dateWateredReform;
+    }
+
 
     // vars for cells
     const inspectedPlantId = selectedCell ? placement[selectedCell] : null;
@@ -345,6 +377,10 @@ function GardenPlanner(){
             setMode("inspect");
             setSelectedCell(key);
             setSelectedGardenPlant(gp);
+
+            setDatePlanted(reformatTime(gp.time_planted));
+            setDateWatered(reformatTime(gp.time_watered));
+
             return;
         }
     };
@@ -380,6 +416,8 @@ function GardenPlanner(){
                     time_watered: nowIsoCondense
                 };
             });
+
+            handleLoadGarden();
 
     };
 
@@ -427,6 +465,12 @@ function GardenPlanner(){
         setSelectedGardenPlant(reloadPlant);
         setSelectedCell(position);
         setEditingNotes(false);
+    }
+
+    const redirectToInfo = async () => {
+        console.log(selectedGardenPlant.plantType)
+        
+        navigate(`/plant-info/${selectedGardenPlant.plantType}`)
     }
 
     return (
@@ -668,12 +712,12 @@ function GardenPlanner(){
 
                                 <div className="gp-detail-row">
                                     <dt>Date planted</dt>
-                                    <dd>{selectedGardenPlant.time_planted}</dd>
+                                    <dd>{datePlanted}</dd>
                                 </div>
 
                                 <div className="gp-detail-row">
                                     <dt>Last watered</dt>
-                                    <dd>{selectedGardenPlant.time_watered}</dd>
+                                    <dd>{dateWatered}</dd>
                                     <button onClick={() => handleWatertimeChange()}>Mark Watered</button>
                                 </div>
 
@@ -710,6 +754,12 @@ function GardenPlanner(){
                                             </div>
                                         )}
                                     </dd>
+                                </div>
+                                        
+
+                                 <div className="gp-detail-row">
+                                    <dt>More Info:</dt>
+                                    <button onClick={() => redirectToInfo()}>Click Here</button>
                                 </div>
 
                                 <div className="gp-detail-delete">

@@ -30,17 +30,17 @@ function Login({OnLoginSuccess}) {
             if (response.ok && data.access) {
                 localStorage.setItem("access_token", data.access);
                 localStorage.setItem("refresh_token", data.refresh);
+                alert("Login successful");
+                navigate("/garden-planner");
                 
-                
-                if(OnLoginSuccess) {
+                /* if(OnLoginSuccess) {
                     alert("Login successful");
                     navigate("/garden-planner");
-                }
+                } */
                 
                 //return;
             }
 
-            
             if(response.status === 401) {
                 setError("Invalid credentials");
             } else {
@@ -48,6 +48,7 @@ function Login({OnLoginSuccess}) {
                 setError(data.detail || "Login failed");
             }
         } catch (err) {
+            console.group(err);
             setError("Server error. Please try again later")
         }
     };

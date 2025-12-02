@@ -106,8 +106,9 @@ main{
     padding: 0.25rem 0.5rem;
 }
 
-
-
+.gp-save-garden {
+    margin-left: -0.75vw;
+}
 
 .gp-grid-title {
     display: flex;
