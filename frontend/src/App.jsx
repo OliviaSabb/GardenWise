@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Registration from './pages/Registration';
 import SingularPlantInfo from './pages/SingularPlantInfo';
 import NavBar from './components/NavBar'
+import ProfileSettings from './pages/ProfileSettings';
 import './App.css';
 
 // Separate inner app content into a component inside BrowserRouter
@@ -64,6 +65,7 @@ function AppContent() {
             <Route path="/plant-info/:id" element={<SingularPlantInfo />} />
             <Route path="/login" element={<Login onLoginSuccess={handleLogInSuccess}/>} />
             <Route path="/register" element={<Registration />} />
+            <Route path="/profile" element={< ProfileSettings/>} />
           </Routes>
       </main>
 

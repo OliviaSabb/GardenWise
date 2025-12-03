@@ -8,6 +8,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken  # Import RefreshToken
 from rest_framework.exceptions import NotFound
 import requests
+from GardenWise.utils import get_zone_from_zip
 from rest_framework.permissions import AllowAny
 from .models import Account, PlantType, Garden, GardenPlant
 from .serializers import AccountSerializer, PlantTypeSerializer, GardenSerializer, GardenPlantSerializer
@@ -120,3 +121,42 @@ class PlantTypeView(generics.ListCreateAPIView):
     queryset = PlantType.objects.all()
     serializer_class = PlantTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class AccountMeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        serializer = AccountSerializer(request.user)
+        return Response(serializer.data)
+    
+
+class UpdateZipView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        zipcode = request.data.get("zipcode")
+
+        if not zipcode:
+            return Response(
+                {"error": "ZIP code is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        
+        zone = get_zone_from_zip(zipcode)
+
+        if not zone:
+            return Response(
+                {"error": "Invalid ZIP code"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.zipcode = zipcode
+        user.zone = zone
+        user.save()
+
+        return Response({
+            "zipcode": user.zipcode,
+            "zone": user.zone
+        })

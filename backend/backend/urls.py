@@ -24,7 +24,8 @@ from GardenWise.views import (
     MyTokenObtainPairView, LogoutView,
     GardenListCreateView, GardenRetrieveUpdateDestroyView,
     GardenPlantListCreateView, GardenPlantRetrieveUpdateDestroyView,
-    PlantTypePropogation, PlantTypeView
+    PlantTypePropogation, PlantTypeView,
+    AccountMeView, UpdateZipView
 )
 from rest_framework_simplejwt.views import TokenBlacklistView
 # main router
@@ -51,6 +52,10 @@ urlpatterns = [
 
     # Plant info
     path('api/planttype/propogate', PlantTypePropogation.as_view(), name='plantType_Propogation'),
-    path('api/planttype/plants', PlantTypeView.as_view(), name='plantType')
+    path('api/planttype/plants', PlantTypeView.as_view(), name='plantType'),
+
+    # account profile
+    path('api/account/me/', AccountMeView.as_view(), name='account_me'),
+    path('api/account/update-zip/', UpdateZipView.as_view(),name='update_zip')
 
 ]

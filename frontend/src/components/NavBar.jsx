@@ -9,6 +9,7 @@ function NavBar({ isLoggedIn, onLogout}) {
                     <Link className="site-nav-link" to="/">Home</Link>
                     <Link className="site-nav-link" to="/garden-planner">Garden Planner</Link>
                     <Link className="site-nav-link" to="/plant-info">Plant Info</Link>
+                    <Link className="site-nav-link" to="/profile">Profile Settings</Link>
                 </div>
             
                 <div className="site-nav-spacer" />

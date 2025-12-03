@@ -26,6 +26,13 @@ function GardenPlanner(){
     
     // hooks
     
+    // get users zone
+    const [rawUserZone, setRawUserZone] = useState(null);   // "10b"
+    const [userZoneNumber, setUserZoneNumber] = useState(0); // actual number 10
+    const [zoneLoading, setZoneLoading] = useState(true);
+    const [zoneError, setZoneError] = useState(null);
+
+
     // load plant types
     const [plantTypes, setPlantTypes] = useState([]);
 
@@ -94,6 +101,24 @@ function GardenPlanner(){
 
     const [creatingGarden, setCreatingGarden] = useState(false);
 
+    // load the user zone from db
+    useEffect(() => {
+        const loadUserZone = async () => {
+            setZoneLoading(true);
+            const res = await fetchWithAuth("http://127.0.0.1:8000/api/account/me/");
+            const data = await res.json();
+
+            const rawZone = data.zone || data.plant_zone || null;
+            setRawUserZone(rawZone);
+
+            const numberZone = rawZone ? parseInt(rawZone, 10) : 0;
+            setUserZoneNumber(numberZone);
+        };
+
+        loadUserZone();
+    }, []);
+
+
     // helper: combine date and time to ISO format
     const toISOStringLocal = (dateStr, timeStr) => {
     if (!dateStr) return null;
@@ -132,6 +157,49 @@ function GardenPlanner(){
             return acc;
         }, {});
     }, [plantTypes]);
+
+    // filter plants by zone
+    const plantsByZone = useMemo(() => {
+        const baseList = plantsByCategory[category] || [];
+
+        console.log("ZONE MEMO RUN:", {
+            zoneLoading,
+            userZoneNumber,
+            baseCount: baseList.length
+        });
+
+
+        if (userZoneNumber === 0) {
+            return baseList;
+        }
+
+        return baseList.filter((plant) => {
+            const zoneRange = plant.zone;
+            
+            if(!zoneRange) return true;
+
+            if(zoneRange === "0") return true; // we can use zone 0 for testing
+            
+            console.log("zone", zoneRange);
+
+            // check zone range, ex 4-8 then split and check if user zone is in range
+            if (zoneRange.includes("-")) {
+                const [minStr, maxStr] = zoneRange.split("-");
+                const minZone = Number(minStr);
+                const maxZone = Number(maxStr);
+
+                return userZoneNumber >= minZone && userZoneNumber <= maxZone;
+            } else { // doesnt contain '-', must be single number
+                return zoneRange;
+            }
+            
+        });
+    }, [plantsByCategory, category, userZoneNumber, zoneLoading]);
+
+    useEffect(() => {
+        console.log("Category Base Count:", plantsByCategory[category]?.length || 0);
+        console.log("Zone filter count:", plantsByZone.length);
+    }, [plantsByZone, category]);
 
     // capitalize the first letter of the name of plants
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
