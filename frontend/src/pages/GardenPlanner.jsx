@@ -32,9 +32,11 @@ function GardenPlanner(){
     const [zoneLoading, setZoneLoading] = useState(true);
     const [zoneError, setZoneError] = useState(null);
 
-
     // load plant types
     const [plantTypes, setPlantTypes] = useState([]);
+
+    // filter zone check box
+    const [zoneFilterEnabled, setZoneFilterEnabled] = useState(false);
 
     // garden save and load
     const [gardenName, setGardenName] = useState("");
@@ -190,7 +192,7 @@ function GardenPlanner(){
 
                 return userZoneNumber >= minZone && userZoneNumber <= maxZone;
             } else { // doesnt contain '-', must be single number
-                return zoneRange;
+                return userZoneNumber === zoneRange;
             }
             
         });
@@ -541,6 +543,11 @@ function GardenPlanner(){
         navigate(`/plant-info/${selectedGardenPlant.plantType}`)
     }
 
+    // render plant list  normal or filtered
+    const displayedPlants = zoneFilterEnabled
+        ? plantsByZone
+        : (plantsByCategory[category] || []);
+
     return (
         <main className="gp-planner">
             <div className="gp-layout">
@@ -559,10 +566,21 @@ function GardenPlanner(){
                             </button>
                         ))}
                     </div>
+                
+                    <div className="gp-filter-zone">
+                        <label>
+                            <input
+                                type="checkbox"
+                                check={zoneFilterEnabled}
+                                onChange={(e) => setZoneFilterEnabled(e.target.checked)}
+                            />
+                            Filter by Zone - Current Zone: {userZoneNumber}
+                        </label>
+                    </div>
 
                     {/* tab lists */}
                     <ul className="gp-plant-list" role="tabpanel">
-                        {(plantsByCategory[category] || []).map((plant) => {
+                        {displayedPlants.map((plant) => {
                             const plantSvg = getPlantImage(plant.common_name.toLowerCase());
                             return (
                                 <li
