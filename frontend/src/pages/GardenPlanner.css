@@ -265,6 +265,9 @@ main{
 .gp-detail-row dt { color: #6b7280; }
 .gp-detail-row dd { margin: 0; }
 .gp-detail-row button {grid-column: 2; max-width: 110px;}
+.gp-detail-row-growth {margin: 2vh 0; padding: 1vh 0; border-top: 1px solid grey; border-bottom: 1px solid grey;}
+.gp-detail-row-health {margin-bottom: 2vh; padding-bottom: 2vh; border-bottom: 1px solid grey;}
+.gp-detail-row-info {margin-bottom: 2vh; padding-bottom: 2vh; border-bottom: 1px solid grey;}
 
 .gp-detail-delete {display: flex; justify-content: center; margin-top: 15px;}
 .gp-detail-delete button {background-color: rgb(248, 80, 80); border: 1px solid grey; border-width: 1px; border-radius: 2px; width: 250px; font-size: 17px; color: white; transition: background-color 0.3s ease;}

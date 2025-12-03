@@ -97,9 +97,9 @@ function GardenPlanner(){
 
     // date/time inputs for planting and watering
     const [datePlanted, setDatePlanted] = useState("");
-    const [timePlanted, setTimePlanted] = useState("");
     const [dateWatered, setDateWatered] = useState("");
-    const [timeWatered, setTimeWatered] = useState("");
+    const [daysTillGrowth, setDaysTillGrowth] = useState(null);
+    const [dateOfGrowth, setDateOfGrowth] = useState("");
 
     const [creatingGarden, setCreatingGarden] = useState(false);
 
@@ -124,6 +124,11 @@ function GardenPlanner(){
     // helper: combine date and time to ISO format
     const toISOStringLocal = (dateStr, timeStr) => {
     if (!dateStr) return null;
+    try {
+        const [year, month, day] = dateStr.split("-");
+    } catch (error) {
+        return null;
+    }
     const [year, month, day] = dateStr.split("-");
     const [hour = "00", minute = "00"] = timeStr ? timeStr.split(":") : [];
     return new Date(`${year}-${month}-${day}T${hour}:${minute}:00`).toISOString();
@@ -334,20 +339,27 @@ function GardenPlanner(){
         setCreatingGarden(false);
     };
 
-    const reformatTime = async (originalTime) => {
-        let dateWateredReform = originalTime.split(' '); // Split date into day and time
-        let dayMonthYear = dateWateredReform[0].split('-') // Splits date into day, month, year
+    const reformatTime = (originalTime) => {
+        const originalTimeDate = new Date(originalTime);
+        originalTimeDate.setHours(originalTimeDate.getHours() - 12);
 
-        dayMonthYear = dayMonthYear[1] + '/' + dayMonthYear[2] + '/' + dayMonthYear[0];    
+        let fixedOriginalTime = originalTimeDate.toISOString();
+        fixedOriginalTime = fixedOriginalTime.substring(0, 10) + " " + fixedOriginalTime.substring(11, 16);
+
+        let dateWateredReform = fixedOriginalTime.split(' '); // Split date into day and time
+        let dayMonthYear = dateWateredReform[0].split('-') // Splits date into day, month, year
+  
         let timeOfDay = dateWateredReform[1].split(':') //Splits time into hour and minute
         let hour = parseInt(timeOfDay[0])
-        let aOrP = "PM";
-        hour += 6; 
-        if (hour > 24){
-            hour -= 24;
+        let aOrP = "AM";
+        if (hour == 12){
+            aOrP = "PM";
+        }
+        if (hour == 0){
+            hour = 12;
         }
         if (hour >= 13){ 
-            aOrP = "AM";
+            aOrP = "PM";
             hour -= 12;
             if (hour < 10){
                    timeOfDay[0] = "0" + hour; 
@@ -360,10 +372,30 @@ function GardenPlanner(){
             timeOfDay[0] = hour; 
         }
   
+        dayMonthYear = dayMonthYear[1] + '/' + dayMonthYear[2] + '/' + dayMonthYear[0];  
         timeOfDay = timeOfDay[0] + ':' + timeOfDay[1] + " " + aOrP;
-
         dateWateredReform = timeOfDay + ' - ' + dayMonthYear;
         return dateWateredReform;
+    }
+
+    const calculateGrowth = async (timePlanted, growthRate) => {
+
+        const timePlantedDate = new Date(timePlanted);
+        timePlantedDate.setHours(timePlantedDate.getHours() - 6);
+
+        const currentDate = new Date()
+        let timeBetween = currentDate - timePlantedDate
+        timeBetween = timeBetween  / (1000 * 60 * 60 * 24);
+        let daysTillGrowth = growthRate - timeBetween; // Calculate days till growth
+        daysTillGrowth = daysTillGrowth.toPrecision(4);
+
+        setDaysTillGrowth(daysTillGrowth);
+        timePlantedDate.setDate(timePlantedDate.getDate() + daysTillGrowth)
+        timePlantedDate.setHours(timePlantedDate.getHours() + 6);
+        
+        let growthDate = reformatTime(timePlantedDate).substring(11, 21)
+        setDateOfGrowth(growthDate);
+        return;
     }
 
 
@@ -407,8 +439,8 @@ function GardenPlanner(){
 
                 // build timestamps
                 const nowIso = new Date().toISOString();
-                const plantedIso = toISOStringLocal(datePlanted, timePlanted) || nowIso;
-                const wateredIso = toISOStringLocal(dateWatered, timeWatered) || nowIso;
+                const plantedIso =  nowIso;
+                const wateredIso =  nowIso;
                 
                 const response = await fetchWithAuth(
                     `http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/`,
@@ -450,6 +482,9 @@ function GardenPlanner(){
 
             setDatePlanted(reformatTime(gp.time_planted));
             setDateWatered(reformatTime(gp.time_watered));
+            calculateGrowth(gp.time_planted, gp.plant_type?.growth_rate);
+
+
 
             return;
         }
@@ -796,56 +831,70 @@ function GardenPlanner(){
                                     <dd>{selectedGardenPlant.position}</dd>
                                 </div>
 
-                                <div className="gp-detail-row">
-                                    <dt>Date planted</dt>
-                                    <dd>{datePlanted}</dd>
+                                <div className="gp-detail-row-growth">
+                                    <div className="gp-detail-row">
+                                        <dt>Date planted</dt>
+                                        <dd>{datePlanted}</dd>
+                                    </div>
+
+                                    <div className="gp-detail-row">
+                                        <dt>Days till Growth </dt>
+                                        <dd>{daysTillGrowth}{" Days"}</dd>
+                                    </div>
+
+                                    <div className="gp-detail-row">
+                                        <dt>Date of Growth</dt>
+                                        <dd>{dateOfGrowth}</dd>
+                                    </div>
                                 </div>
 
-                                <div className="gp-detail-row">
-                                    <dt>Last watered</dt>
-                                    <dd>{dateWatered}</dd>
-                                    <button onClick={() => handleWatertimeChange()}>Mark Watered</button>
+                                <div className="gp-detail-row-health">
+                                    <div className="gp-detail-row">
+                                        <dt>Last watered</dt>
+                                        <dd>{dateWatered}</dd>
+                                        <button onClick={() => handleWatertimeChange()}>Mark Watered</button>
+                                    </div>
+                                    
+                                    <div className="gp-detail-row">
+                                        <dt>Health</dt>
+                                        <dd>{selectedGardenPlant.health}</dd>
+                                    </div>
                                 </div>
-
-                                <div className="gp-detail-row">
-                                    <dt>Health</dt>
-                                    <dd>{selectedGardenPlant.health}</dd>
-                                </div>
-
                                 {/* <div className="gp-detail-row">
                                     <dt>Notes</dt>
                                     <dd>{selectedGardenPlant.notes || "No notes yet."}</dd>
                                 </div> */}
-                                <div className="gp-detail-row">
-                                    <dt>Notes</dt>
-                                    <dd>
-                                        {editingNotes ? (
-                                            <div>
-                                                <textarea
-                                                    value={notesDraft}
-                                                    onChange={(e) => setNotesDraft(e.target.value)}
-                                                    maxLength={250}
-                                                    rows={4}
-                                                    placeholder="Add notes about this plant!"
-                                                />
+                                <div className="gp-detail-row-info">
+                                    <div className="gp-detail-row">
+                                        <dt>Notes</dt>
+                                        <dd>
+                                            {editingNotes ? (
                                                 <div>
-                                                    <button onClick={handleSaveNotes}>Save</button>
-                                                    <button onClick={cancelEditingNotes}>Cancel</button>
+                                                    <textarea
+                                                        value={notesDraft}
+                                                        onChange={(e) => setNotesDraft(e.target.value)}
+                                                        maxLength={250}
+                                                        rows={4}
+                                                        placeholder="Add notes about this plant!"
+                                                    />
+                                                    <div>
+                                                        <button onClick={handleSaveNotes}>Save</button>
+                                                        <button onClick={cancelEditingNotes}>Cancel</button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <p>{selectedGardenPlant.notes || "No notes yet."}</p>
-                                                <button onClick={startEditingNotes}>Update Notes</button>
-                                            </div>
-                                        )}
-                                    </dd>
-                                </div>
-                                        
-
-                                 <div className="gp-detail-row">
-                                    <dt>More Info:</dt>
-                                    <button onClick={() => redirectToInfo()}>Click Here</button>
+                                            ) : (
+                                                <div>
+                                                    <p>{selectedGardenPlant.notes || "No notes yet."}</p>
+                                                    <button onClick={startEditingNotes}>Update Notes</button>
+                                                </div>
+                                            )}
+                                        </dd>
+                                    </div>
+                                            
+                                    <div className="gp-detail-row">
+                                        <dt>More Info:</dt>
+                                        <button onClick={() => redirectToInfo()}>Click Here</button>
+                                    </div>
                                 </div>
 
                                 <div className="gp-detail-delete">
