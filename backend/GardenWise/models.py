@@ -36,7 +36,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
     zipcode = models.CharField(max_length=10, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    zone = models.CharField(max_length=5, default="0")
+    
     objects = AccountManager()
 
     USERNAME_FIELD = 'username'

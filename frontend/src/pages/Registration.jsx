@@ -27,7 +27,8 @@ function Registration(){
         const payload = {
             username,
             email,
-            password
+            password,
+            zipcode
         };
 
         try {

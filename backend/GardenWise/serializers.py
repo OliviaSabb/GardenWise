@@ -2,6 +2,8 @@
 from rest_framework import serializers
 from .models import Account, PlantType, Garden, GardenPlant
 
+from GardenWise.utils import get_zone_from_zip
+
 from django.contrib.auth.hashers import make_password
 
 from django.utils import timezone
@@ -11,8 +13,8 @@ from datetime import datetime, date, time
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'username', 'email', 'password', 'zipcode']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'username', 'email', 'password', 'zipcode', 'zone']
+        extra_kwargs = {'password': {'write_only': True}, 'zone': {'read_only': True}}
 
     def validate_username(self, value):
         if not value:
@@ -34,7 +36,18 @@ class AccountSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Hash password before saving
         validated_data['password'] = make_password(validated_data['password'])
-        account = Account.objects.create(**validated_data)
+
+        # zipcode from reg
+        zipcode = validated_data.get("zipcode")
+        # default zone to 0
+        zone = 0
+        
+        if zipcode:
+            api_zone = get_zone_from_zip(zipcode)
+            if api_zone:
+                zone = api_zone
+        
+        account = Account.objects.create(zone=zone, **validated_data)
 
         # Automatically create a default garden for each new account
         Garden.objects.create(name="Default Garden", user=account)
