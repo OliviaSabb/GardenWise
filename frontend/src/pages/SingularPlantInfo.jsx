@@ -119,13 +119,13 @@ function SingularPlantInfo(){
                     <h2>{currentPlant.scientific_name}</h2>
 
                     <h2 className = "plantStatsTitle">Growth Rate:</h2>
-                    <h2>{currentPlant.growth_rate}</h2>
+                    <h2>{currentPlant.growth_rate + " Days"}</h2>
 
                     <h2 className = "plantStatsTitle">Ph:</h2>
                     <h2>{currentPlant.ph}</h2>
 
                     <h2 className = "plantStatsTitle">Temperture:</h2>
-                    <h2>{currentPlant.temperture}</h2>
+                    <h2>{currentPlant.temperture + "°F"}</h2>
 
                     <h2 className = "plantStatsTitle">Season:</h2>
                     <h2>{currentPlant.season}</h2>
@@ -134,7 +134,7 @@ function SingularPlantInfo(){
                     <h2>{currentPlant.zone}</h2>
 
                     <h2 className = "plantStatsTitle">Spacing:</h2>
-                    <h2> {currentPlant.spacing}</h2>
+                    <h2> {currentPlant.spacing + " Sqft"}</h2>
                 </div>
             </div>
         </div>

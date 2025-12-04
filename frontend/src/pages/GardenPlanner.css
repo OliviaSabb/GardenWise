@@ -264,7 +264,9 @@ main{
 .gp-detail-row { display: grid; grid-template-columns: 110px 1fr; gap: 8px; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; }
 .gp-detail-row dt { color: #6b7280; }
 .gp-detail-row dd { margin: 0; }
-.gp-detail-row button {grid-column: 2; max-width: 110px;}
+.gp-detail-row button {grid-column: 2; max-width: 110px; }
+.gp-detail-row-info button {max-width: 98px; max-height:21px;}
+.gp-detail-row-info p {margin-top: 0; margin-bottom: 5px;}
 .gp-detail-row-growth {margin: 2vh 0; padding: 1vh 0; border-top: 1px solid grey; border-bottom: 1px solid grey;}
 .gp-detail-row-health {margin-bottom: 2vh; padding-bottom: 2vh; border-bottom: 1px solid grey;}
 .gp-detail-row-info {margin-bottom: 2vh; padding-bottom: 2vh; border-bottom: 1px solid grey;}

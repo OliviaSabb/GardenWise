@@ -63,6 +63,19 @@ function GardenPlanner(){
         setNotesDraft("");
     }
 
+    // Health
+    const [editingHealth, setEditingHealth] = useState(false);
+    const [selectedHealth, setSelectedHealth] = useState("Healthy");
+
+    const changingHealth = () => {
+        setEditingHealth(true)
+        setSelectedHealth("Healthy")
+    }
+
+    const handleHealthChange = (event) => {
+        setSelectedHealth(event.target.value);
+    }
+
     // modes for planting or inspecting plants
     const [mode, setMode] = useState("plant");
     const [selectedCell, setSelectedCell] = useState(null);
@@ -379,20 +392,18 @@ function GardenPlanner(){
     }
 
     const calculateGrowth = async (timePlanted, growthRate) => {
-
         const timePlantedDate = new Date(timePlanted);
         timePlantedDate.setHours(timePlantedDate.getHours() - 6);
 
         const currentDate = new Date()
         let timeBetween = currentDate - timePlantedDate
         timeBetween = timeBetween  / (1000 * 60 * 60 * 24);
-        let daysTillGrowth = growthRate - timeBetween; // Calculate days till growth
-        daysTillGrowth = daysTillGrowth.toPrecision(4);
+        let timeTillGrowth = growthRate - timeBetween; // Calculate days till growth
+        timeTillGrowth = Math.trunc(timeTillGrowth)
+        setDaysTillGrowth(timeTillGrowth);
 
-        setDaysTillGrowth(daysTillGrowth);
-        timePlantedDate.setDate(timePlantedDate.getDate() + daysTillGrowth)
+        timePlantedDate.setDate(timePlantedDate.getDate() + timeTillGrowth)
         timePlantedDate.setHours(timePlantedDate.getHours() + 6);
-        
         let growthDate = reformatTime(timePlantedDate).substring(11, 21)
         setDateOfGrowth(growthDate);
         return;
@@ -414,6 +425,7 @@ function GardenPlanner(){
 
         const gp = gardenPlantsByPosition[key] || null;
 
+        setEditingHealth(false);
         // TODO: add token checks if needed here later
         if (gp == null) {
             setMode("plant");
@@ -573,9 +585,25 @@ function GardenPlanner(){
     }
 
     const redirectToInfo = async () => {
-        console.log(selectedGardenPlant.plantType)
-        
-        navigate(`/plant-info/${selectedGardenPlant.plantType}`)
+        navigate(`/plant-info/${selectedGardenPlant.plant_type.id}`)
+    }
+
+    const submitHealth = async () => {
+      const response = await fetchWithAuth(
+            `http://127.0.0.1:8000/api/gardens/${selectedGarden}/plants/${selectedGardenPlant.id}/`,
+            {
+                method: "PATCH",
+                body: JSON.stringify({ health: selectedHealth })
+            }
+        )
+
+        if(!response.ok) {
+            const errText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errText}`);
+        }
+
+        console.log("Successfully updated notes");
+        const newMap = await handleLoadGarden();
     }
 
     // render plant list  normal or filtered
@@ -857,7 +885,26 @@ function GardenPlanner(){
                                     
                                     <div className="gp-detail-row">
                                         <dt>Health</dt>
-                                        <dd>{selectedGardenPlant.health}</dd>
+                                        {editingHealth ? 
+                                            (   
+                                                <div>
+                                                      <label htmlFor="health">Change Health:</label>
+                                                        <select id="health" name="health" onChange={handleHealthChange}>
+                                                            <option value="Healthy">Healthy</option>
+                                                            <option value="Poor">Poor</option>
+                                                        </select>
+                                                        <button onClick={() => submitHealth()}>Submit</button>
+                                                </div>
+                                            ) 
+                                            : 
+                                            (
+                                                <div>
+                                                    <dd>{selectedGardenPlant.health}</dd>
+                                                    <button onClick={() => changingHealth()}>Change Health</button>
+                                                </div>
+                                            )
+                                        }
+                                        
                                     </div>
                                 </div>
                                 {/* <div className="gp-detail-row">
@@ -892,8 +939,8 @@ function GardenPlanner(){
                                     </div>
                                             
                                     <div className="gp-detail-row">
-                                        <dt>More Info:</dt>
-                                        <button onClick={() => redirectToInfo()}>Click Here</button>
+                                        <dt>More Info</dt>
+                                        <button onClick={() => redirectToInfo()}>More Info</button>
                                     </div>
                                 </div>
 
