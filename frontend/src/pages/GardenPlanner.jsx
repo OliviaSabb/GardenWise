@@ -210,7 +210,7 @@ function GardenPlanner(){
 
                 return userZoneNumber >= minZone && userZoneNumber <= maxZone;
             } else { // doesnt contain '-', must be single number
-                return userZoneNumber === zoneRange;
+                return userZoneNumber === Number(zoneRange);
             }
             
         });
