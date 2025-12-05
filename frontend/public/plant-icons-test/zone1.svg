@@ -1,0 +1,18 @@
+<svg id="Capa_1"
+     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 512 512">
+
+  <rect x="0" y="0" width="512" height="512" fill="black" opacity="0.6"/>
+
+  <text x="256"
+        y="256"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        fill="white"
+        font-size="64"
+        font-family="Arial"
+        font-weight="bold">
+    ZONE 1
+  </text>
+
+</svg>
